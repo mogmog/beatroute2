@@ -150,7 +150,7 @@ export default class ImageRenderer extends AbstractRenderer{
         externalRenderers.requestRender(view);
 
         // cleanup
-        //context.resetWebGLState();
+        context.resetWebGLState();
     }
 
     start () {

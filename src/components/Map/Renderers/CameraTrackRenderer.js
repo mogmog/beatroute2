@@ -31,7 +31,7 @@ export default class CameraTrackRenderer extends AbstractRenderer {
      * Setup function, called once
      */
     setup(context) {
-
+      console.log("once");
         var self = this;
 
         var externalRenderers = this.esriLoaderContext.externalRenderers;
@@ -121,10 +121,8 @@ export default class CameraTrackRenderer extends AbstractRenderer {
 
     }
 
-    onRequestAnimationtrack (time) {
-
-        // wrote you code that update object on requestAnimationtrack
-        // because it will be much smooth that in render callback
+    onRequestAnimationFrame(time) {
+      //nothing to animate
     }
 
     render(context) {
@@ -156,7 +154,7 @@ export default class CameraTrackRenderer extends AbstractRenderer {
         externalRenderers.requestRender(view);
 
         // cleanup
-        //context.resetWebGLState();
+        context.resetWebGLState();
     }
 
     start() {

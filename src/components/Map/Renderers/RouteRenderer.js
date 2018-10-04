@@ -158,7 +158,7 @@ export default class RouteRenderer extends AbstractRenderer {
         externalRenderers.requestRender(view);
 
         // cleanup
-        //context.resetWebGLState();
+        context.resetWebGLState();
     }
 
     start() {

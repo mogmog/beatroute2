@@ -181,17 +181,17 @@ radarOriginData.forEach(item => {
 const images3dArray= [
 
   {
-    url: '/img/photo.png?_=' + Date.now(),
+    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
     position: [-110.7395240072906, 32.33625842258334, 2500],
   },
 
   {
-    url: '/img/photo.png?_=' + Date.now(),
+    url: "https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg",
     position: [-110.6995240072906, 32.33625842258334, 2500],
   },
 
   {
-    url: '/img/photo.png?_=' + Date.now(),
+    url: "https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg",
     position: [-110.7195240072906, 32.35625842258334, 2500],
   },
 

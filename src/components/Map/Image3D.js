@@ -12,6 +12,7 @@ export default class Image3D extends THREE.Mesh {
         super();
 
         this.config = config;
+        this.trackcurve = trackcurve;
 
         let texture;
 
@@ -28,7 +29,7 @@ export default class Image3D extends THREE.Mesh {
                 map: texture,
                 color: 0xffffff,
                 transparent : true,
-                opacity : 0.75,
+                opacity : 0.85,
                 transparent: true,
                 depthTest: true,
                 depthWrite: true,

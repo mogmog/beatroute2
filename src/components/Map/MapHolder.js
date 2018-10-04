@@ -79,9 +79,7 @@ export default class MapHolder extends Component {
                         zoom: 13
                     });
 
-                    window.setInterval(x => {
-                        console.log(view.camera.clone().toJSON())
-                    }, 10000);
+
 
                     self.esriLoaderContext = {
 
@@ -109,11 +107,9 @@ export default class MapHolder extends Component {
                     const imageRenderer = new ImageRenderer(self.esriLoaderContext, images, curve);
                     const cameraTrackRenderer = new CameraTrackRenderer(self.esriLoaderContext, images, curve);
 
-                    this.externalRenderersContainer.push(imageRenderer);
                     this.externalRenderersContainer.push(routeRenderer);
+                    this.externalRenderersContainer.push(imageRenderer);
                     this.externalRenderersContainer.push(cameraTrackRenderer);
-
-                    //this.externalRenderersContainer.push(imageRenderer2)
 
                     externalRenderers.add(view, routeRenderer);
                     externalRenderers.add(view, imageRenderer);
@@ -207,7 +203,7 @@ export default class MapHolder extends Component {
         window.requestAnimationFrame(this.animate);
 
         for (let i = 0; i < this.externalRenderersContainer.length; i++) {
-            this.externalRenderersContainer[i].onRequestAnimationFrame(time);
+            this.externalRenderersContainer[i].onRequestAnimationFrame && this.externalRenderersContainer[i].onRequestAnimationFrame(time);
         }
 
         TWEEN.update(time);
