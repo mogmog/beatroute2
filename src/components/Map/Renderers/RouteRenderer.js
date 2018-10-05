@@ -22,7 +22,6 @@ export default class RouteRenderer extends AbstractRenderer {
         this.scene = null;        // three.js scene
         this.vertexIdx = 0;
         this.ambient = null;      // three.js ambient light source
-        this.sun = null;          // three.js sun light source
     }
 
     /**
@@ -56,7 +55,7 @@ export default class RouteRenderer extends AbstractRenderer {
             color: 0xffdb58
         });
 
-       this.frame = new THREE.Mesh(geometry, this.tubematerial);
+       this.route = new THREE.Mesh(geometry, this.tubematerial);
 
         // initialize the three.js renderer
         //////////////////////////////////////////////////////////////////////////////////////
@@ -116,11 +115,11 @@ export default class RouteRenderer extends AbstractRenderer {
 
         externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
 
-        self.frame.position.set(renderPos[0], renderPos[1], renderPos[2]);
+        self.route.position.set(renderPos[0], renderPos[1], renderPos[2]);
 
         var transform = new THREE.Matrix4();
         transform.fromArray(externalRenderers.renderCoordinateTransformAt(view, posEst, SpatialReference.WGS84, new Array(16)));
-        transform.decompose(self.frame.position, self.frame.quaternion, self.frame.scale);
+        transform.decompose(self.route.position, self.route.quaternion, self.route.scale);
     }
 
     onRequestAnimationFrame (time) {
@@ -162,7 +161,7 @@ export default class RouteRenderer extends AbstractRenderer {
     }
 
     start() {
-        this.scene.add(this.frame);
+        this.scene.add(this.route);
         this.scene.add(new THREE.AmbientLight(0xeeeeee));
     }
 }
