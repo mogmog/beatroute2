@@ -21,7 +21,6 @@ export default class ImageRenderer extends AbstractRenderer{
         this.scene = null;        // three.js scene
         this.vertexIdx = 0;
         this.ambient = null;      // three.js ambient light source
-        this.sun = null;          // three.js sun light source
         this.images3dArray = [];
 
         this.images3dArray = images.map((image) => new Image3D(image, trackcurve));
@@ -39,10 +38,6 @@ export default class ImageRenderer extends AbstractRenderer{
         var SpatialReference = this.esriLoaderContext.SpatialReference;
 
         var view = context.view; //this.esriLoaderContext.view;
-
-        this.view = view;
-
-        this.sun = new THREE.DirectionalLight(0xffffff, 0.5);
 
         // initialize the three.js renderer
         //////////////////////////////////////////////////////////////////////////////////////
@@ -160,6 +155,5 @@ export default class ImageRenderer extends AbstractRenderer{
             this.scene.add( this.images3dArray[i] );
         }
 
-        this.scene.add(this.sun);
     }
 }

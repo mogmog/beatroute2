@@ -29,7 +29,7 @@ export default class Image3D extends THREE.Mesh {
                 map: texture,
                 color: 0xffffff,
                 transparent : true,
-                opacity : 0.85,
+                opacity : 0.65,
                 transparent: true,
                 depthTest: true,
                 depthWrite: true,

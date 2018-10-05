@@ -76,10 +76,21 @@ export default class MapHolder extends Component {
                         map: map,
                         container: "viewDiv",
                         camera: initCam,
-                        zoom: 13
+                        zoom: 13,
+                        alphaCompositingEnabled: true,
+                        environment: {
+                          lighting : {date : new Date("1 January 2019 18:00")},
+                          background: {
+                            type: "color", // autocasts as new ColorBackground()
+                            // set the color alpha to 0 for full transparency
+                            color: [0, 177, 244, 0.2]
+                          },
+                          // disable stars
+                          starsEnabled: false,
+                          //disable atmosphere
+                          atmosphereEnabled: false
+                        }
                     });
-
-
 
                     self.esriLoaderContext = {
 

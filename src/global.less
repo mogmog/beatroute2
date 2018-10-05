@@ -4,12 +4,24 @@ body,
   height: 100%;
 }
 
+body {
+  background-image: linear-gradient(45deg, #e9e6ef 25%, transparent 25%, transparent 75%, #e9e6ef 75%),
+  linear-gradient(45deg, #e9e6ef 25%, transparent 25%, transparent 75%, #e9e6ef 75%);
+  background-size:51px 51px;
+  background-position: 0 0, 25px 25px;
+}
+
 .colorWeak {
   filter: invert(80%);
 }
 
 .ant-layout {
   min-height: 100vh;
+  background: url("http://texturify.com/static/preview2/stock-photo-sunrise-sky-10556.jpg") no-repeat fixed !important;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  background-size: cover !important;
 }
 
 canvas {
