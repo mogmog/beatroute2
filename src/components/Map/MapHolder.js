@@ -203,7 +203,7 @@ export default class MapHolder extends Component {
         window.requestAnimationFrame(this.animate);
 
         for (let i = 0; i < this.externalRenderersContainer.length; i++) {
-            this.externalRenderersContainer[i].onRequestAnimationFrame && this.externalRenderersContainer[i].onRequestAnimationFrame(time);
+            this.externalRenderersContainer[i].onRequestAnimationFrame(time);
         }
 
         TWEEN.update(time);
