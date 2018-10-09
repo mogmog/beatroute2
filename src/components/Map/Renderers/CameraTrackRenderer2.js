@@ -21,6 +21,7 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     this.vertexIdx = 0;
     this.ambient = null;      // three.js ambient light source
 
+    //lat longs
     this.geo = [
       [-110.7395240072906, 32.33625842258334, 2500],
       [-110.7495240072906, 32.33625842258334, 2500],
@@ -40,15 +41,33 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     var view = context.view; //this.esriLoaderContext.view;
 
-    var curve = new THREE.CatmullRomCurve3(
+    var curve = undefined;
+
+
+    //curve using three coordinates does work
+    curve = new THREE.CatmullRomCurve3(
       [
         new THREE.Vector3( -5, -5, 3 ),
         new THREE.Vector3( -1000, -5, 3 ),
-        new THREE.Vector3( -3000, -10, 4),
-        new THREE.Vector3( -3000, -4000, 7 ),
         new THREE.Vector3( -13000, -18000, 10 )
       ]
     );
+
+    //this doesnt work. Maybe it is because the renderer hasnt initialised to get the
+    //right coordinates as it is being called before this.start()
+
+    // const thing = [];
+    //
+    // this.geo.forEach((x) => {
+    //   let pos = [0, 0, 0];
+    //   externalRenderers.toRenderCoordinates(view, x, 0, SpatialReference.WGS84, pos, 0, 1);
+    //   thing.push((new THREE.Vector3(pos[0], pos[1], pos[2])));
+    // });
+    //
+    //
+    // curve = new THREE.CatmullRomCurve3(thing);
+
+    //
 
     var pointsCount = 500;
     var pointsCount1 = pointsCount + 1;

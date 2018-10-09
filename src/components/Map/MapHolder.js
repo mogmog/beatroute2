@@ -178,19 +178,27 @@ export default class MapHolder extends Component {
 
           const {images} = this.props;
 
-          console.log("Tuesdays Idea");
+          //console.log("Tuesdays Idea");
           //for tues
           //if this was fed with Vectors based from lat longs....then wouldnt they be the mega big numbers I want?
           //ie use     externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
 
-          const curve = [
-            [-110.7322940072906, 32.33647342258334, 2500],
-            [-110.7333440072906, 32.33611142258334, 2500],
-            [-110.7395240072906, 32.33695242258334, 2500],
-            [-110.7317340072906, 32.33646642258334, 2500],
-            [-110.7344640072906, 32.33616642258334, 2500],
-            [-110.7318340072906, 32.33625842258334, 2500]
-          ];
+          const curve = new THREE.CatmullRomCurve3( [
+            new THREE.Vector3( 50, -4590, 3900 ),
+            new THREE.Vector3( 550, -4540, 3901 ),
+            new THREE.Vector3( 1550, -4540, 3901 ),
+            new THREE.Vector3( 3550, -5540, 3901 ),
+            new THREE.Vector3( 6550, 1540, 3901 )
+          ] );
+
+          // const curveGeo = [
+          //   [-110.7322940072906, 32.33647342258334, 2500],
+          //   [-110.7333440072906, 32.33611142258334, 2500],
+          //   [-110.7395240072906, 32.33695242258334, 2500],
+          //   [-110.7317340072906, 32.33646642258334, 2500],
+          //   [-110.7344640072906, 32.33616642258334, 2500],
+          //   [-110.7318340072906, 32.33625842258334, 2500]
+          // ];
 
           const routeRenderer = new RouteRenderer(self.esriLoaderContext);
           const imageRenderer = new ImageRenderer(self.esriLoaderContext, images, curve);

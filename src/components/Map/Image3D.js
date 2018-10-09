@@ -66,13 +66,13 @@ export default class Image3D extends THREE.Mesh {
     mouseup ( camera ) {
 
         //i think first photo should move to this position
-        console.log(this.trackcurve.getPoint(0));
+        //console.log(this.trackcurve.getPoint(0));
 
         //i think middle photo should move to this position
-        console.log(this.trackcurve.getPoint(0.5));
+        //console.log(this.trackcurve.getPoint(0.5));
 
         //and last photo should move to this position
-        console.log(this.trackcurve.getPoint(1));
+       // console.log(this.trackcurve.getPoint(1));
 
 
         var trackPoint = this.trackcurve.getPoint(0.1);
