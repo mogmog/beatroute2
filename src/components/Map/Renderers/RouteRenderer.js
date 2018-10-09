@@ -5,8 +5,6 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 
-import Image3D from "../Image3D";
-
 import AbstractRenderer from "./AbstractRenderer"
 
 export default class RouteRenderer extends AbstractRenderer {
@@ -46,7 +44,7 @@ export default class RouteRenderer extends AbstractRenderer {
         ] );
 
 
-        var geometry = new THREE.TubeGeometry(curve, 1000, 20, 2, false);
+      var geometry = new THREE.TubeGeometry(curve, 100, 100, 2, false);
 
         this.tubematerial = new THREE.MeshPhongMaterial({
             transparent : true,
@@ -126,6 +124,10 @@ export default class RouteRenderer extends AbstractRenderer {
         //nothing to animate route
         // wrote you code that update object on requestAnimationFrame
         // because it will be much smooth that in render callback
+    }
+
+    onSwipe (isLeft, event) {
+
     }
 
     render(context) {

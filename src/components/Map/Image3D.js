@@ -18,6 +18,7 @@ export default class Image3D extends THREE.Mesh {
 
         if (this.config.url)
         {
+
             let textureLoader = new THREE.TextureLoader(new THREE.LoadingManager());
             texture = textureLoader.load( this.config.url );
         }
@@ -29,7 +30,7 @@ export default class Image3D extends THREE.Mesh {
                 map: texture,
                 color: 0xffffff,
                 transparent : true,
-                opacity : 0.65,
+                opacity : 1,
                 transparent: true,
                 depthTest: true,
                 depthWrite: true,

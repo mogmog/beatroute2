@@ -23,19 +23,20 @@
     "prettier": "prettier --write ./src/**/**/**/*"
   },
   "dependencies": {
-    "@turf/turf": "^5.1.6",
-    "@tweenjs/tween.js": "^17.2.0",
-    "esri-loader": "x.x.x",
-    "three": "0.97.0",
     "@antv/data-set": "^0.9.6",
     "@babel/runtime": "^7.0.0",
+    "@turf/turf": "^5.1.6",
+    "@tweenjs/tween.js": "^17.2.0",
     "antd": "^3.9.2",
     "bizcharts": "^3.2.2",
     "bizcharts-plugin-slider": "^2.0.3",
     "classnames": "^2.2.6",
+    "component-image": "^2.1.0",
     "dva": "^2.4.0",
     "enquire-js": "^0.2.1",
+    "esri-loader": "x.x.x",
     "hash.js": "^1.1.5",
+    "html2canvas": "^1.0.0-alpha.12",
     "lodash": "^4.17.10",
     "lodash-decorators": "^6.0.0",
     "memoize-one": "^4.0.0",
@@ -48,12 +49,17 @@
     "qs": "^6.5.2",
     "rc-animate": "^2.4.4",
     "react": "^16.5.1",
+    "react-16-material-floating-button": "^0.6.2",
     "react-container-query": "^0.11.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-document-title": "^2.0.3",
     "react-dom": "^16.5.1",
     "react-fittext": "^1.0.0",
-    "react-router-dom": "^4.3.1"
+    "react-mfb": "^0.6.0",
+    "react-native-circular-action-menu": "^0.5.0",
+    "react-router-dom": "^4.3.1",
+    "repng": "^3.1.0",
+    "three": "0.97.0"
   },
   "devDependencies": {
     "@types/react": "^16.4.11",
@@ -88,7 +94,7 @@
     "umi-plugin-ga": "^1.0.3"
   },
   "optionalDependencies": {
-    "puppeteer": "^1.6.0"
+    "puppeteer": "^1.9.0"
   },
   "lint-staged": {
     "**/*.{js,jsx,less}": [

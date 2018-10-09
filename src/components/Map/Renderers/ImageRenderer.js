@@ -23,6 +23,7 @@ export default class ImageRenderer extends AbstractRenderer{
         this.ambient = null;      // three.js ambient light source
         this.images3dArray = [];
 
+        console.log(images);
         this.images3dArray = images.map((image) => new Image3D(image, trackcurve));
 
     }
@@ -114,6 +115,10 @@ export default class ImageRenderer extends AbstractRenderer{
 
     onRequestAnimationFrame (time) {
        //nothing to animate
+    }
+
+    onSwipe (isLeft, event) {
+
     }
 
     render (context) {

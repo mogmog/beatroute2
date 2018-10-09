@@ -18,6 +18,10 @@ AbstractRenderer.prototype.start = function(){throw "AbstractRenderer.prototype.
 
 AbstractRenderer.prototype.render = function(){throw "AbstractRenderer.prototype.render"};
 
+AbstractRenderer.prototype.onSwipe = function(isLeft, event) {
+  throw "AbstractRenderer.prototype.onSwipe"
+}
+
 AbstractRenderer.prototype.onMouseMove = function(mouse, event){
 
     var camera = this.camera;

@@ -7,7 +7,7 @@ import * as TWEEN from '@tweenjs/tween.js';
 
 import AbstractRenderer from "./AbstractRenderer"
 
-export default class CameraTrackRenderer extends AbstractRenderer {
+export default class CameraTrackRenderer2 extends AbstractRenderer {
 
   constructor(esriLoaderContext) {
 
@@ -37,7 +37,59 @@ export default class CameraTrackRenderer extends AbstractRenderer {
 
     var externalRenderers = this.esriLoaderContext.externalRenderers;
     var SpatialReference = this.esriLoaderContext.SpatialReference;
+
     var view = context.view; //this.esriLoaderContext.view;
+
+    var curve = new THREE.CatmullRomCurve3(
+      [
+        new THREE.Vector3( -5, -5, 3 ),
+        new THREE.Vector3( -1000, -5, 3 ),
+        new THREE.Vector3( -3000, -10, 4),
+        new THREE.Vector3( -3000, -4000, 7 ),
+        new THREE.Vector3( -13000, -18000, 10 )
+      ]
+    );
+
+    var pointsCount = 500;
+    var pointsCount1 = pointsCount + 1;
+    var points = curve.getPoints(pointsCount);
+
+    var pts = curve.getPoints(pointsCount);
+    var width = 450;
+    var widthSteps = 1;
+    let pts2 = curve.getPoints(pointsCount);
+    pts2.forEach(p => {
+      p.z += width;
+    });
+    pts = pts.concat(pts2);
+
+    var ribbonGeom = new THREE.BufferGeometry().setFromPoints(pts);
+
+    var indices = [];
+    for (let iy = 0; iy < widthSteps; iy++) { // the idea taken from PlaneBufferGeometry
+      for (let ix = 0; ix < pointsCount; ix++) {
+        var a = ix + pointsCount1 * iy;
+        var b = ix + pointsCount1 * (iy + 1);
+        var c = (ix + 1) + pointsCount1 * (iy + 1);
+        var d = (ix + 1) + pointsCount1 * iy;
+        // faces
+        indices.push(a, b, d);
+        indices.push(b, c, d);
+      }
+    }
+    ribbonGeom.setIndex(indices);
+    ribbonGeom.computeVertexNormals();
+
+    this.route = new THREE.Mesh(ribbonGeom, new THREE.MeshNormalMaterial({
+      side: THREE.DoubleSide,
+      transparent : true,
+      opacity : 0.5,
+    }));
+
+
+
+    //this.route = new THREE.Mesh( geometry, material );
+
 
     // initialize the three.js renderer
     //////////////////////////////////////////////////////////////////////////////////////
@@ -80,50 +132,28 @@ export default class CameraTrackRenderer extends AbstractRenderer {
     // Projection matrix can be copied directly
     this.camera.projectionMatrix.fromArray(cam.projectionMatrix);
 
-    const thing = [];
-
-    this.geo.forEach((x) => {
-      let pos = [0, 0, 0];
-      externalRenderers.toRenderCoordinates(view, x, 0, SpatialReference.WGS84, pos, 0, 1);
-      thing.push((new THREE.Vector3(pos[0], pos[1], pos[2])));
-    });
-
-
-    var curve = new THREE.CatmullRomCurve3(thing);
-
-
-    // Set up settings for later extrusion
-    var extrudeSettings = {
-      steps           : 100,
-      bevelEnabled    : false,
-      extrudePath     : false
-    };
-
-    //Define a triangle
-    var pts = [], count = 3;
-    for ( var i = 0; i < count; i ++ ) {
-      var l = 20;
-      var a = 2 * i / count * Math.PI;
-      pts.push( new THREE.Vector2 ( Math.cos( a ) * l, Math.sin( a ) * l ) );
-    }
-    var shape = new THREE.Shape( pts );
-
-    var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-    var material = new THREE.MeshLambertMaterial( { color: 0xb00000, wireframe: false } );
-
-
-    this.mesh = new THREE.Mesh( geometry, material );
-
     this.start();
-
-
-
-
-
 
     // cleanup after ourselfs
     context.resetWebGLState();
 
+    // set frame ----------------
+
+    const posEst = [
+      -110.7395240072906,
+      32.32625842258334,
+      1500
+    ];
+
+    var renderPos = [0, 0, 0];
+
+    externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
+
+    self.route.position.set(renderPos[0], renderPos[1], renderPos[2]);
+
+    var transform = new THREE.Matrix4();
+    transform.fromArray(externalRenderers.renderCoordinateTransformAt(view, posEst, SpatialReference.WGS84, new Array(16)));
+    transform.decompose(self.route.position, self.route.quaternion, self.route.scale);
   }
 
   onRequestAnimationFrame (time) {
@@ -169,9 +199,7 @@ export default class CameraTrackRenderer extends AbstractRenderer {
   }
 
   start() {
-    this.scene.add(this.track);
-    this.scene.add(this.mesh);
-    //this.scene.add(this.ball);
+    this.scene.add(this.route);
     this.scene.add(new THREE.AmbientLight(0xeeeeee));
   }
 }
