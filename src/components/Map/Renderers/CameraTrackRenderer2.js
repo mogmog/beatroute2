@@ -23,12 +23,13 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
 
     this.geo = [
-      [-110.7395240072906, 32.33625842258334, 2500],
-      [-110.7395240072906, 32.33625842258334, 2500],
-      [-110.7395240072906, 32.33625842258334, 2500]
+      [-110.7395240072906, 32.33625842258334, 1950],
+      [-110.7395240072906, 32.33625842258334, 1890],
+      [-110.7495240072906, 32.33625842258334, 1850],
+
     ].map((x) => {
-      x[0] = x[0] + ((Math.random() / 10));
-      x[1] = x[1] + ((Math.random() / 10));
+      x[0] = x[0] + 2 * ((Math.random() / 10));
+      x[1] = x[1] + 1.5 * ((Math.random() / 10));
       return x;
     });
 
@@ -45,21 +46,6 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     var view = context.view; //this.esriLoaderContext.view;
 
-    var curve = undefined;
-
-    //
-    //  you apply position to the route - it the same
-    //
-    //curve using three coordinates does work
-    /*curve = new THREE.CatmullRomCurve3(
-      [
-        new THREE.Vector3( -5, -5, 3 ),    // < - - - here is you local coord sys
-        new THREE.Vector3( -1000, -5, 3 ),
-        new THREE.Vector3( -13000, -18000, 10 )
-      ]
-    );*/
-
-    //lat longs
     const curve_path = [];
 
     this.geo.forEach(x => {
@@ -68,45 +54,29 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
       curve_path.push(new THREE.Vector3(pos[0], pos[1], pos[2])); // we make all coords in global world coord sys !
     });
 
-    curve = new THREE.CatmullRomCurve3(curve_path);
+    let curve = new THREE.CatmullRomCurve3(curve_path);
 
-    var pointsCount = 500;
-    var pointsCount1 = pointsCount + 1;
-    var points = curve.getPoints(pointsCount);
+    var extrudeSettings = {
+      steps: 2000,
+      bevelEnabled: false,
+      extrudePath: curve
+    };
 
-    var pts = curve.getPoints(pointsCount);
-    var width = 600;
-    var widthSteps = 1;
-    let pts2 = curve.getPoints(pointsCount);
-    pts2.forEach(p => {
-      p.z += width;
-    });
-    pts = pts.concat(pts2);
+    let squareShape = new THREE.Shape();
+    squareShape.moveTo( 0,0 );
+    squareShape.lineTo( 0, 120 );
+    squareShape.lineTo( 20, 120 );
+    squareShape.lineTo( 20, 0);
+    squareShape.lineTo( 0, 0 );
 
-    var ribbonGeom = new THREE.BufferGeometry().setFromPoints(pts);
-
-    var indices = [];
-    for (let iy = 0; iy < widthSteps; iy++) {
-      // the idea taken from PlaneBufferGeometry
-      for (let ix = 0; ix < pointsCount; ix++) {
-        var a = ix + pointsCount1 * iy;
-        var b = ix + pointsCount1 * (iy + 1);
-        var c = ix + 1 + pointsCount1 * (iy + 1);
-        var d = ix + 1 + pointsCount1 * iy;
-        // faces
-        indices.push(a, b, d);
-        indices.push(b, c, d);
-      }
-    }
-    ribbonGeom.setIndex(indices);
-    ribbonGeom.computeVertexNormals();
+    const geometry = new THREE.ExtrudeBufferGeometry( squareShape, extrudeSettings );
 
     this.route = new THREE.Mesh(
-      ribbonGeom,
+      geometry,
       new THREE.MeshNormalMaterial({
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.7,
       })
     );
 

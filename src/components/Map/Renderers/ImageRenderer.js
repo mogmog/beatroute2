@@ -114,6 +114,7 @@ export default class ImageRenderer extends AbstractRenderer {
       let rotation = transform;
       let m2 = new THREE.Matrix4();
       m2.makeRotationX(THREE.Math.degToRad(90));
+      m2.makeRotationY(THREE.Math.degToRad(110));
       rotation.multiply(m2);
       image3d.setRotationFromMatrix(rotation);
     }

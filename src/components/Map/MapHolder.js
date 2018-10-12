@@ -125,13 +125,18 @@ export default class MapHolder extends Component {
             layers: [greyTileLayer],
           });
 
-
+          var flyOptions = {
+            speedFactor: 0.1, // animation is 10 times slower than default
+            easing: "out-quint", // easing function to slow down when reaching the target,
+            maxDuration : 4500
+          };
 
           var graphicsLayer = new GraphicsLayer();
           map.add(graphicsLayer);
 
           var initCam = {
             // autocasts as new Camera()
+
 
             position: {
               spatialReference: { latestWkid: 3857, wkid: 102100 },
@@ -172,7 +177,7 @@ export default class MapHolder extends Component {
           // Set the extent on the view
 
 
-
+          //
           // view.on("drag", function(event){
           //   // prevents panning with the mouse drag event
           //   event.stopPropagation();
@@ -192,11 +197,6 @@ export default class MapHolder extends Component {
 
           const { images } = this.props;
 
-          //console.log("Tuesdays Idea");
-          //for tues
-          //if this was fed with Vectors based from lat longs....then wouldnt they be the mega big numbers I want?
-          //ie use     externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
-
           const curve = new THREE.CatmullRomCurve3([
             new THREE.Vector3(50, -4590, 3900),
             new THREE.Vector3(550, -4540, 3901),
@@ -205,32 +205,16 @@ export default class MapHolder extends Component {
             new THREE.Vector3(6550, 1540, 3901),
           ]);
 
-          // const curveGeo = [
-          //   [-110.7322940072906, 32.33647342258334, 2500],
-          //   [-110.7333440072906, 32.33611142258334, 2500],
-          //   [-110.7395240072906, 32.33695242258334, 2500],
-          //   [-110.7317340072906, 32.33646642258334, 2500],
-          //   [-110.7344640072906, 32.33616642258334, 2500],
-          //   [-110.7318340072906, 32.33625842258334, 2500]
-          // ];
-
-          const routeRenderer = new RouteRenderer(self.esriLoaderContext);
           const imageRenderer = new ImageRenderer(self.esriLoaderContext, images, curve);
-          //const cameraTrackRenderer = new CameraTrackRenderer(self.esriLoaderContext, images, curve);
-          const cameraTrackRenderer2 = new CameraTrackRenderer2(
-            self.esriLoaderContext,
-            images,
-            curve
-          );
+          const routeRenderer = new RouteRenderer(self.esriLoaderContext);
+          const cameraTrackRenderer2 = new CameraTrackRenderer2( self.esriLoaderContext, images, curve );
 
-          this.externalRenderersContainer.push(routeRenderer);
           this.externalRenderersContainer.push(imageRenderer);
-          // this.externalRenderersContainer.push(cameraTrackRenderer);
+          this.externalRenderersContainer.push(routeRenderer);
           this.externalRenderersContainer.push(cameraTrackRenderer2);
 
-          externalRenderers.add(view, routeRenderer);
           externalRenderers.add(view, imageRenderer);
-          //externalRenderers.add(view, cameraTrackRenderer);
+          externalRenderers.add(view, routeRenderer);
           externalRenderers.add(view, cameraTrackRenderer2);
 
           var xDown = null;
@@ -251,23 +235,39 @@ export default class MapHolder extends Component {
 
             var xDiff = xDown - xUp;
             var yDiff = yDown - yUp;
-
+          //  [-110.7395240072906, 32.33625842258334, 2500]
             if (Math.abs(xDiff) > Math.abs(yDiff)) {
               /*most significant*/
               if (xDiff > 0) {
                 for (let i = 0; i < self.externalRenderersContainer.length; i++) {
-                  self.externalRenderersContainer[i].onSwipe(true, evt);
+                  view.goTo({
+                    position: {
+                      x: -110.7395240072906,
+                      y: 32.53625842258334,
+                      z: 15000,
+                      spatialReference: {
+                        wkid: 4326
+                      }
+                    },
+                    heading: 0,
+                    tilt: 0
+                  }, flyOptions);
                 }
               } else {
                 for (let i = 0; i < self.externalRenderersContainer.length; i++) {
-                  self.externalRenderersContainer[i].onSwipe(false, evt);
+                  view.goTo({
+                    position: {
+                      x: -110.7495240072906,
+                      y: 32.351625842258334,
+                      z: 15000,
+                      spatialReference: {
+                        wkid: 4326
+                      }
+                    },
+                    heading: 0,
+                    tilt: 0
+                  }, flyOptions);
                 }
-              }
-            } else {
-              if (yDiff > 0) {
-                /* up swipe */
-              } else {
-                /* down swipe */
               }
             }
             /* reset values */
