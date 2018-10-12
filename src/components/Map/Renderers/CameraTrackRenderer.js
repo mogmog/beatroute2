@@ -5,21 +5,19 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 
-import AbstractRenderer from "./AbstractRenderer"
+import AbstractRenderer from './AbstractRenderer';
 
 export default class CameraTrackRenderer extends AbstractRenderer {
-
   constructor(esriLoaderContext) {
-
     super();
 
     this.esriLoaderContext = esriLoaderContext;
 
-    this.renderer = null;     // three.js renderer
-    this.camera = null;       // three.js camera
-    this.scene = null;        // three.js scene
+    this.renderer = null; // three.js renderer
+    this.camera = null; // three.js camera
+    this.scene = null; // three.js scene
     this.vertexIdx = 0;
-    this.ambient = null;      // three.js ambient light source
+    this.ambient = null; // three.js ambient light source
 
     this.geo = [
       [-110.7395240072906, 32.33625842258334, 2500],
@@ -32,7 +30,6 @@ export default class CameraTrackRenderer extends AbstractRenderer {
    * Setup function, called once
    */
   setup(context) {
-
     var self = this;
 
     var externalRenderers = this.esriLoaderContext.externalRenderers;
@@ -60,12 +57,12 @@ export default class CameraTrackRenderer extends AbstractRenderer {
 
     var originalSetRenderTarget = this.renderer.setRenderTarget.bind(this.renderer);
 
-    this.renderer.setRenderTarget = function (target) {
+    this.renderer.setRenderTarget = function(target) {
       originalSetRenderTarget(target);
       if (target == null) {
         context.bindRenderTarget();
       }
-    }
+    };
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,62 +79,51 @@ export default class CameraTrackRenderer extends AbstractRenderer {
 
     const thing = [];
 
-    this.geo.forEach((x) => {
+    this.geo.forEach(x => {
       let pos = [0, 0, 0];
       externalRenderers.toRenderCoordinates(view, x, 0, SpatialReference.WGS84, pos, 0, 1);
-      thing.push((new THREE.Vector3(pos[0], pos[1], pos[2])));
+      thing.push(new THREE.Vector3(pos[0], pos[1], pos[2]));
     });
-
 
     var curve = new THREE.CatmullRomCurve3(thing);
 
-
     // Set up settings for later extrusion
     var extrudeSettings = {
-      steps           : 100,
-      bevelEnabled    : false,
-      extrudePath     : false
+      steps: 100,
+      bevelEnabled: false,
+      extrudePath: false,
     };
 
     //Define a triangle
-    var pts = [], count = 3;
-    for ( var i = 0; i < count; i ++ ) {
+    var pts = [],
+      count = 3;
+    for (var i = 0; i < count; i++) {
       var l = 20;
-      var a = 2 * i / count * Math.PI;
-      pts.push( new THREE.Vector2 ( Math.cos( a ) * l, Math.sin( a ) * l ) );
+      var a = ((2 * i) / count) * Math.PI;
+      pts.push(new THREE.Vector2(Math.cos(a) * l, Math.sin(a) * l));
     }
-    var shape = new THREE.Shape( pts );
+    var shape = new THREE.Shape(pts);
 
-    var geometry = new THREE.ExtrudeGeometry( shape, extrudeSettings );
-    var material = new THREE.MeshLambertMaterial( { color: 0xb00000, wireframe: false } );
+    var geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    var material = new THREE.MeshLambertMaterial({ color: 0xb00000, wireframe: false });
 
-
-    this.mesh = new THREE.Mesh( geometry, material );
+    this.mesh = new THREE.Mesh(geometry, material);
 
     this.start();
 
-
-
-
-
-
     // cleanup after ourselfs
     context.resetWebGLState();
-
   }
 
-  onRequestAnimationFrame (time) {
+  onRequestAnimationFrame(time) {
     //nothing to animate route
     // wrote you code that update object on requestAnimationFrame
     // because it will be much smooth that in render callback
   }
 
-  onSwipe (isLeft, event) {
-
-  }
+  onSwipe(isLeft, event) {}
 
   render(context) {
-
     var externalRenderers = this.esriLoaderContext.externalRenderers;
     var SpatialReference = this.esriLoaderContext.SpatialReference;
 
@@ -158,11 +144,13 @@ export default class CameraTrackRenderer extends AbstractRenderer {
 
     this.renderer.state.reset();
 
-    this.renderer.state.setBlending( THREE.NoBlending ); // 0.97 fix !
+    this.renderer.state.setBlending(THREE.NoBlending); // 0.97 fix !
 
     this.renderer.render(this.scene, this.camera);
 
-    externalRenderers.requestRender(view);
+    // externalRenderers.requestRender(view); - this is bad practice - endless recursion
+    //
+    // check the MapHolder - animation frame
 
     // cleanup
     context.resetWebGLState();

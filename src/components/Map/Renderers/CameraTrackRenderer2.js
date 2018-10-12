@@ -5,35 +5,39 @@
 import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 
-import AbstractRenderer from "./AbstractRenderer"
+import AbstractRenderer from './AbstractRenderer';
 
 export default class CameraTrackRenderer2 extends AbstractRenderer {
-
   constructor(esriLoaderContext) {
-
     super();
 
     this.esriLoaderContext = esriLoaderContext;
 
-    this.renderer = null;     // three.js renderer
-    this.camera = null;       // three.js camera
-    this.scene = null;        // three.js scene
+    this.renderer = null; // three.js renderer
+    this.camera = null; // three.js camera
+    this.scene = null; // three.js scene
     this.vertexIdx = 0;
-    this.ambient = null;      // three.js ambient light source
+    this.ambient = null; // three.js ambient light source
 
-    //lat longs
+
+
+
     this.geo = [
       [-110.7395240072906, 32.33625842258334, 2500],
-      [-110.7495240072906, 32.33625842258334, 2500],
-      [-110.7495240072906, 32.37625842258334, 2500],
-    ];
+      [-110.7395240072906, 32.33625842258334, 2500],
+      [-110.7395240072906, 32.33625842258334, 2500]
+    ].map((x) => {
+      x[0] = x[0] + ((Math.random() / 10));
+      x[1] = x[1] + ((Math.random() / 10));
+      return x;
+    });
+
   }
 
   /**
    * Setup function, called once
    */
   setup(context) {
-
     var self = this;
 
     var externalRenderers = this.esriLoaderContext.externalRenderers;
@@ -43,38 +47,35 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     var curve = undefined;
 
-
+    //
+    //  you apply position to the route - it the same
+    //
     //curve using three coordinates does work
-    curve = new THREE.CatmullRomCurve3(
+    /*curve = new THREE.CatmullRomCurve3(
       [
-        new THREE.Vector3( -5, -5, 3 ),
+        new THREE.Vector3( -5, -5, 3 ),    // < - - - here is you local coord sys
         new THREE.Vector3( -1000, -5, 3 ),
         new THREE.Vector3( -13000, -18000, 10 )
       ]
-    );
+    );*/
 
-    //this doesnt work. Maybe it is because the renderer hasnt initialised to get the
-    //right coordinates as it is being called before this.start()
+    //lat longs
+    const curve_path = [];
 
-    // const thing = [];
-    //
-    // this.geo.forEach((x) => {
-    //   let pos = [0, 0, 0];
-    //   externalRenderers.toRenderCoordinates(view, x, 0, SpatialReference.WGS84, pos, 0, 1);
-    //   thing.push((new THREE.Vector3(pos[0], pos[1], pos[2])));
-    // });
-    //
-    //
-    // curve = new THREE.CatmullRomCurve3(thing);
+    this.geo.forEach(x => {
+      let pos = [0, 0, 0];
+      externalRenderers.toRenderCoordinates(view, x, 0, SpatialReference.WGS84, pos, 0, 1);
+      curve_path.push(new THREE.Vector3(pos[0], pos[1], pos[2])); // we make all coords in global world coord sys !
+    });
 
-    //
+    curve = new THREE.CatmullRomCurve3(curve_path);
 
     var pointsCount = 500;
     var pointsCount1 = pointsCount + 1;
     var points = curve.getPoints(pointsCount);
 
     var pts = curve.getPoints(pointsCount);
-    var width = 450;
+    var width = 600;
     var widthSteps = 1;
     let pts2 = curve.getPoints(pointsCount);
     pts2.forEach(p => {
@@ -85,12 +86,13 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     var ribbonGeom = new THREE.BufferGeometry().setFromPoints(pts);
 
     var indices = [];
-    for (let iy = 0; iy < widthSteps; iy++) { // the idea taken from PlaneBufferGeometry
+    for (let iy = 0; iy < widthSteps; iy++) {
+      // the idea taken from PlaneBufferGeometry
       for (let ix = 0; ix < pointsCount; ix++) {
         var a = ix + pointsCount1 * iy;
         var b = ix + pointsCount1 * (iy + 1);
-        var c = (ix + 1) + pointsCount1 * (iy + 1);
-        var d = (ix + 1) + pointsCount1 * iy;
+        var c = ix + 1 + pointsCount1 * (iy + 1);
+        var d = ix + 1 + pointsCount1 * iy;
         // faces
         indices.push(a, b, d);
         indices.push(b, c, d);
@@ -99,16 +101,14 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     ribbonGeom.setIndex(indices);
     ribbonGeom.computeVertexNormals();
 
-    this.route = new THREE.Mesh(ribbonGeom, new THREE.MeshNormalMaterial({
-      side: THREE.DoubleSide,
-      transparent : true,
-      opacity : 0.5,
-    }));
-
-
-
-    //this.route = new THREE.Mesh( geometry, material );
-
+    this.route = new THREE.Mesh(
+      ribbonGeom,
+      new THREE.MeshNormalMaterial({
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.5,
+      })
+    );
 
     // initialize the three.js renderer
     //////////////////////////////////////////////////////////////////////////////////////
@@ -131,12 +131,12 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     var originalSetRenderTarget = this.renderer.setRenderTarget.bind(this.renderer);
 
-    this.renderer.setRenderTarget = function (target) {
+    this.renderer.setRenderTarget = function(target) {
       originalSetRenderTarget(target);
       if (target == null) {
         context.bindRenderTarget();
       }
-    }
+    };
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -158,6 +158,9 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     // set frame ----------------
 
+    // !  self.route already in world coordinates !
+
+    /*
     const posEst = [
       -110.7395240072906,
       32.32625842258334,
@@ -166,27 +169,25 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     var renderPos = [0, 0, 0];
 
-    externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
+    //externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
+    //self.route.position.set(renderPos[0], renderPos[1], renderPos[2]);
 
-    self.route.position.set(renderPos[0], renderPos[1], renderPos[2]);
+    //var transform = new THREE.Matrix4();
+    //transform.fromArray(externalRenderers.renderCoordinateTransformAt(view, posEst, SpatialReference.WGS84, new Array(16)));
+    //transform.decompose(self.route.position, self.route.quaternion, self.route.scale);
 
-    var transform = new THREE.Matrix4();
-    transform.fromArray(externalRenderers.renderCoordinateTransformAt(view, posEst, SpatialReference.WGS84, new Array(16)));
-    transform.decompose(self.route.position, self.route.quaternion, self.route.scale);
+    */
   }
 
-  onRequestAnimationFrame (time) {
+  onRequestAnimationFrame(time) {
     //nothing to animate route
     // wrote you code that update object on requestAnimationFrame
     // because it will be much smooth that in render callback
   }
 
-  onSwipe (isLeft, event) {
-
-  }
+  onSwipe(isLeft, event) {}
 
   render(context) {
-
     var externalRenderers = this.esriLoaderContext.externalRenderers;
     var SpatialReference = this.esriLoaderContext.SpatialReference;
 
@@ -207,11 +208,13 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     this.renderer.state.reset();
 
-    this.renderer.state.setBlending( THREE.NoBlending ); // 0.97 fix !
+    this.renderer.state.setBlending(THREE.NoBlending); // 0.97 fix !
 
     this.renderer.render(this.scene, this.camera);
 
-    externalRenderers.requestRender(view);
+    // externalRenderers.requestRender(view); - this is bad practice - endless recursion
+    //
+    // check the MapHolder - animation frame
 
     // cleanup
     context.resetWebGLState();
