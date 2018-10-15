@@ -6,7 +6,8 @@ import * as THREE from 'three';
 
 import AbstractRenderer from './AbstractRenderer';
 
-import Image3D from '../Image3D';
+import Image3D from '../Entities/Image3D';
+import Image3DContainer from '../Entities/Image3DContainer';
 
 export default class ImageRenderer extends AbstractRenderer {
   constructor(esriLoaderContext, images, trackcurve) {
@@ -19,10 +20,21 @@ export default class ImageRenderer extends AbstractRenderer {
     this.scene = null; // three.js scene
     this.vertexIdx = 0;
     this.ambient = null; // three.js ambient light source
-    this.images3dArray = [];
 
     console.log(images);
-    this.images3dArray = images.map(image => new Image3D(image, trackcurve));
+
+    this.images = images;
+
+    this.geo_curve_path = [
+      // should be set by trackcurve !
+      [-110.7395240072906, 32.33625842258334, 2500],
+      [-110.7395240072906, 32.33625842258334, 2500],
+      [-110.7395240072906, 32.34625842258334, 2500],
+    ].map(x => {
+      x[0] = x[0] + Math.random() / 10;
+      x[1] = x[1] + Math.random() / 10;
+      return x;
+    });
   }
 
   /**
@@ -78,15 +90,29 @@ export default class ImageRenderer extends AbstractRenderer {
     // Projection matrix can be copied directly
     this.camera.projectionMatrix.fromArray(cam.projectionMatrix);
 
-    this.start();
-
-    // cleanup after ourselfs
-    context.resetWebGLState();
-
     // set positions ----------------
 
-    for (let i = 0; i < this.images3dArray.length; i++) {
-      let image3d = this.images3dArray[i];
+    //lat longs
+    const curve_path = [];
+
+    this.geo_curve_path.forEach(x => {
+      let pos = [0, 0, 0];
+      externalRenderers.toRenderCoordinates(view, x, 0, SpatialReference.WGS84, pos, 0, 1);
+      curve_path.push(new THREE.Vector3(pos[0], pos[1], pos[2])); // we make all coords in global world coord sys !
+    });
+
+    let curve = new THREE.CatmullRomCurve3(curve_path);
+
+    this.images3dContainer = new Image3DContainer(curve);
+
+    let imgs = this.images.map(image => new Image3D(image));
+
+    for (let i = 0; i < imgs.length; i++) {
+      this.images3dContainer.add(imgs[i]);
+    }
+
+    for (let i = 0; i < this.images3dContainer.children.length; i++) {
+      let image3d = this.images3dContainer.children[i];
 
       let pos = [0, 0, 0];
 
@@ -114,10 +140,27 @@ export default class ImageRenderer extends AbstractRenderer {
       let rotation = transform;
       let m2 = new THREE.Matrix4();
       m2.makeRotationX(THREE.Math.degToRad(90));
-      m2.makeRotationY(THREE.Math.degToRad(110));
       rotation.multiply(m2);
       image3d.setRotationFromMatrix(rotation);
     }
+
+    // create curve
+
+    var tubeGeometry = new THREE.TubeBufferGeometry(curve, 50, 200, 28, false);
+    var material = new THREE.MeshNormalMaterial({
+      side: THREE.FrontSide,
+      transparent: true,
+      opacity: 0.3,
+    })
+
+    this.route = new THREE.Mesh(tubeGeometry, material);
+
+    //
+
+    this.start();
+
+    // cleanup after ourselfs
+    context.resetWebGLState();
   }
 
   onRequestAnimationFrame(time) {
@@ -160,8 +203,15 @@ export default class ImageRenderer extends AbstractRenderer {
   }
 
   start() {
-    for (let i = 0; i < this.images3dArray.length; i++) {
-      this.scene.add(this.images3dArray[i]);
-    }
+    // for (let i = 0; i < this.images3dArray.length; i++)
+    // {
+    //     this.scene.add(this.images3dArray[i]);
+    // }
+
+    this.scene.add(this.route);
+
+    this.scene.add(this.images3dContainer);
+
+    this.scene.add(new THREE.AmbientLight(0xeeeeee));
   }
 }

@@ -33,7 +33,7 @@ AbstractRenderer.prototype.onMouseMove = function(mouse, event){
 
   raycaster.setFromCamera( mouse, camera );
 
-  var intersects = raycaster.intersectObjects( this.scene.children, true );
+  var intersects = raycaster.intersectObjects( this.scene.children || [] , true );
 
   if ( intersects.length > 0 ) {
 

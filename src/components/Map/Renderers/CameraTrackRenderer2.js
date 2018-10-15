@@ -23,9 +23,8 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
 
     this.geo = [
-      [-110.7395240072906, 32.33625842258334, 1950],
-      [-110.7395240072906, 32.33625842258334, 1890],
-      [-110.7495240072906, 32.33625842258334, 1850],
+      [-110.7395240072906, 32.33625842258334, 21950],
+      [-110.7395240072906, 32.33625842258334, 21890],
 
     ].map((x) => {
       x[0] = x[0] + 2 * ((Math.random() / 10));
@@ -57,16 +56,16 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     let curve = new THREE.CatmullRomCurve3(curve_path);
 
     var extrudeSettings = {
-      steps: 2000,
+      steps: 7000,
       bevelEnabled: false,
       extrudePath: curve
     };
 
     let squareShape = new THREE.Shape();
     squareShape.moveTo( 0,0 );
-    squareShape.lineTo( 0, 120 );
-    squareShape.lineTo( 20, 120 );
-    squareShape.lineTo( 20, 0);
+    squareShape.lineTo( 0, 520 );
+    squareShape.lineTo( 200, 520 );
+    squareShape.lineTo( 200, 0);
     squareShape.lineTo( 0, 0 );
 
     const geometry = new THREE.ExtrudeBufferGeometry( squareShape, extrudeSettings );
@@ -74,9 +73,9 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     this.route = new THREE.Mesh(
       geometry,
       new THREE.MeshNormalMaterial({
-        side: THREE.DoubleSide,
+        side: THREE.FrontSide,
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.3,
       })
     );
 
@@ -126,27 +125,6 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     // cleanup after ourselfs
     context.resetWebGLState();
 
-    // set frame ----------------
-
-    // !  self.route already in world coordinates !
-
-    /*
-    const posEst = [
-      -110.7395240072906,
-      32.32625842258334,
-      1500
-    ];
-
-    var renderPos = [0, 0, 0];
-
-    //externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
-    //self.route.position.set(renderPos[0], renderPos[1], renderPos[2]);
-
-    //var transform = new THREE.Matrix4();
-    //transform.fromArray(externalRenderers.renderCoordinateTransformAt(view, posEst, SpatialReference.WGS84, new Array(16)));
-    //transform.decompose(self.route.position, self.route.quaternion, self.route.scale);
-
-    */
   }
 
   onRequestAnimationFrame(time) {
@@ -192,6 +170,6 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
   start() {
     this.scene.add(this.route);
-    this.scene.add(new THREE.AmbientLight(0xeeeeee));
+    //this.scene.add(new THREE.AmbientLight(0xeeeeee));
   }
 }

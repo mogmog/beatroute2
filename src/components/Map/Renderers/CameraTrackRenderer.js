@@ -116,6 +116,8 @@ export default class CameraTrackRenderer extends AbstractRenderer {
   }
 
   onRequestAnimationFrame(time) {
+
+
     //nothing to animate route
     // wrote you code that update object on requestAnimationFrame
     // because it will be much smooth that in render callback

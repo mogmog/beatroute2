@@ -18,6 +18,16 @@ export default class RouteRenderer extends AbstractRenderer {
     this.scene = null; // three.js scene
     this.vertexIdx = 0;
     this.ambient = null; // three.js ambient light source
+    this.nMax = 0;
+    this.tick = 0;
+
+    this.geo_curve_path = [
+      // should be set by trackcurve !
+      [-110.64328314789721, 32.37868835152182, 1900],
+      [-110.67697590267913, 32.51583581670097, 1900],
+      [-110.70284137541316, 32.479947745911, 1900],
+    ];
+
   }
 
   /**
@@ -33,23 +43,42 @@ export default class RouteRenderer extends AbstractRenderer {
 
     const pts = [];
 
-    var curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-5, -5, 1),
-      new THREE.Vector3(-1000, -5, 1),
-      new THREE.Vector3(-3000, -10, 1),
-      new THREE.Vector3(-3000, -4000, 1),
-    ]);
 
-    var geometry = new THREE.TubeGeometry(curve, 100, 100, 2, false);
 
-    this.tubematerial = new THREE.MeshPhongMaterial({
-      transparent: true,
-      opacity: 0.5,
-      side: THREE.FrontSide,
-      color: 0xffdb58,
+    //lat longs
+    const curve_path = [];
+
+    this.geo_curve_path.forEach(x => {
+      let pos = [0, 0, 0];
+      externalRenderers.toRenderCoordinates(view, x, 0, SpatialReference.WGS84, pos, 0, 1);
+      curve_path.push(new THREE.Vector3(pos[0], pos[1], pos[2])); // we make all coords in global world coord sys !
     });
 
-    this.route = new THREE.Mesh(geometry, this.tubematerial);
+    const  curve = new THREE.CatmullRomCurve3(curve_path);
+
+    var extrudeSettings = {
+      steps: 2000,
+      bevelEnabled: false,
+      extrudePath: curve
+    };
+
+    let squareShape = new THREE.Shape();
+    squareShape.moveTo( 0,0 );
+    squareShape.lineTo( 0, 120 );
+    squareShape.lineTo( 10, 120 );
+    squareShape.lineTo( 10, 0);
+    squareShape.lineTo( 0, 0 );
+
+    const geometry = new THREE.ExtrudeBufferGeometry( squareShape, extrudeSettings );
+
+    var material = new THREE.MeshPhongMaterial({
+      side: THREE.FrontSide,
+      transparent: true,
+      opacity: 0.6,
+      color: 0xffdb58,
+    })
+
+    this.route = new THREE.Mesh(geometry, material);
 
     // initialize the three.js renderer
     //////////////////////////////////////////////////////////////////////////////////////
@@ -97,32 +126,11 @@ export default class RouteRenderer extends AbstractRenderer {
     // cleanup after ourselfs
     context.resetWebGLState();
 
-    // set frame ----------------
-
-    const posEst = [-110.7395240072906, 32.32625842258334, 1500];
-
-    var renderPos = [0, 0, 0];
-
-    externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
-
-    self.route.position.set(renderPos[0], renderPos[1], renderPos[2]);
-
-    var transform = new THREE.Matrix4();
-    transform.fromArray(
-      externalRenderers.renderCoordinateTransformAt(
-        view,
-        posEst,
-        SpatialReference.WGS84,
-        new Array(16)
-      )
-    );
-    transform.decompose(self.route.position, self.route.quaternion, self.route.scale);
   }
 
   onRequestAnimationFrame(time) {
-    //nothing to animate route
-    // wrote you code that update object on requestAnimationFrame
-    // because it will be much smooth that in render callback
+
+
   }
 
   onSwipe(isLeft, event) {}
