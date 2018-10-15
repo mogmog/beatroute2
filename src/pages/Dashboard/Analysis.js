@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import MapHolder from "../../components/Map/MapHolder";
+import CardHolder from "../../components/Cards/CardHolder";
 
 import '../../../node_modules/react-16-material-floating-button/mfb.css';
 
 import MFB from 'react-mfb';
 
-console.log(MFB);
+import { Carousel } from 'antd';
 
 @connect(({ chart, loading }) => ({
   chart,
@@ -48,28 +49,29 @@ class Analysis extends Component {
   render() {
 
     var effect = 'zoomin',
-      pos = 'br',
-      method = 'hover';
+      pos = 'bl',
+      method = 'click';
 
     return (
       <div>
 
         <MFB.Menu effect={effect} method={method} position={pos}>
           <MFB.MainButton iconResting="ion-plus-round" iconActive="ion-close-round" />
-          <MFB.ChildButton
-            onClick={function(e){ console.log(e); e.preventDefault(); }}
-            icon="ion-social-github"
-            label="View on Github"
-            href="https://github.com/nobitagit/react-material-floating-button/" />
-          <MFB.ChildButton
-            icon="ion-social-octocat"
-            label="Follow me on Github"
-            href="https://github.com/nobitagit" />
+
           <MFB.ChildButton
             icon="ion-social-twitter"
-            label="Share on Twitter"
-            href="http://twitter.com/share?text=Amazing Google Inbox style material floating menu as a React component!&url=http://nobitagit.github.io/react-material-floating-button/&hashtags=material,menu,reactjs,react,component" />
+            label="Next"
+          />
+
+          <MFB.ChildButton
+            icon="ion-social-github"
+            label="Previous"
+             />
+
         </MFB.Menu>
+
+        <CardHolder></CardHolder>
+
 
         <MapHolder images={this.props.chart.images3dArray}/>
       </div>

@@ -134,7 +134,6 @@ export default class MapHolder extends Component {
           map.add(graphicsLayer);
 
           var initCam = {
-            // autocasts as new Camera()
 
             position: {
               spatialReference: { latestWkid: 3857, wkid: 102100 },
@@ -148,8 +147,9 @@ export default class MapHolder extends Component {
 
           const view = new SceneView({
             map: map,
+            center : [121.6324102319777, 25.06283956579864, 1000],
             container: 'viewDiv',
-            camera: initCam,
+            Xcamera: initCam,
             constraints: {
               minZoom: 5,
               maxZoom: 19,
