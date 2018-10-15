@@ -137,29 +137,21 @@ export default class MapHolder extends Component {
 
             position: {
               spatialReference: { latestWkid: 3857, wkid: 102100 },
-              x: -12326625.642966498,
-              y: 3790704.6709845047,
-              z: 6620.639594970271,
-            },
-            heading: 9.192543279901852,
-            tilt: 72.23390968888746,
+              latitude: 121.6324102319777,
+              longitude: 25.06283956579864,
+              z: 400  // altitude in meters
+            }
           };
 
           const view = new SceneView({
             map: map,
-            center : [121.6324102319777, 25.06283956579864, 1000],
+            center : [121.6324102319777, 25.06283956579864, 200],
             container: 'viewDiv',
             Xcamera: initCam,
-            constraints: {
-              minZoom: 5,
-              maxZoom: 19,
-              snapToZoom: true,
-            },
             viewingMode: 'local',
-            zoom: 13,
+            zoom: 16,
             alphaCompositingEnabled: true,
             environment: {
-              lighting: { date: new Date('1 January 2019 18:00') },
               background: {
                 type: 'color', // autocasts as new ColorBackground()
                 // set the color alpha to 0 for full transparency

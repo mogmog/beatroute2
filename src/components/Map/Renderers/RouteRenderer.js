@@ -381,9 +381,9 @@ export default class RouteRenderer extends AbstractRenderer {
 
     let squareShape = new THREE.Shape();
     squareShape.moveTo( 0,0 );
-    squareShape.lineTo( 0, 10 );
-    squareShape.lineTo( 3, 10 );
-    squareShape.lineTo( 3, 0);
+    squareShape.lineTo( 0, 30 );
+    squareShape.lineTo( 10, 30 );
+    squareShape.lineTo( 10, 0);
     squareShape.lineTo( 0, 0 );
 
     const geometry = new THREE.ExtrudeBufferGeometry( squareShape, extrudeSettings );
