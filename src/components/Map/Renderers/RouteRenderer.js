@@ -18,8 +18,10 @@ export default class RouteRenderer extends AbstractRenderer {
     this.scene = null; // three.js scene
     this.vertexIdx = 0;
     this.ambient = null; // three.js ambient light source
-    this.nMax = 0;
-    this.tick = 0;
+
+    this.nEnd = 0;
+    this.nMax = null;
+    this.nStep = 4000;
 
     this.geo_curve_path = [
       // should be set by trackcurve !
@@ -42,6 +44,9 @@ export default class RouteRenderer extends AbstractRenderer {
     var view = context.view; //this.esriLoaderContext.view;
 
     const pts = [];
+
+
+
 
 
 
@@ -74,11 +79,44 @@ export default class RouteRenderer extends AbstractRenderer {
     var material = new THREE.MeshPhongMaterial({
       side: THREE.FrontSide,
       transparent: true,
-      opacity: 0.6,
+      opacity: 0.1,
       color: 0xffdb58,
     })
 
     this.route = new THREE.Mesh(geometry, material);
+
+
+
+
+
+    // path
+    var path = new THREE.CatmullRomCurve3( curve_path );
+
+    // params
+    var pathSegments = 200;
+    var tubeRadius = 200;
+    var radiusSegments = 50;
+    var closed = false;
+
+    var geometryAnim =new THREE.ExtrudeBufferGeometry( squareShape, extrudeSettings );// new THREE.TubeGeometry( path, pathSegments, tubeRadius, radiusSegments, closed );
+
+    // to buffer goemetry
+   // geometryAnim = new THREE.BufferGeometry().fromGeometry( geometryAnim );
+    this.nMax = geometryAnim.attributes.position.count;
+
+    // material
+    var materialAnim = new THREE.MeshPhongMaterial( {
+      color: 0xffdb58,
+      side: THREE.FrontSide,
+      transparent: true,
+      opacity: 1,
+    } );
+
+    // mesh
+    this.mesh = new THREE.Mesh( geometryAnim, materialAnim  );
+
+
+
 
     // initialize the three.js renderer
     //////////////////////////////////////////////////////////////////////////////////////
@@ -130,6 +168,12 @@ export default class RouteRenderer extends AbstractRenderer {
 
   onRequestAnimationFrame(time) {
 
+      if (this.mesh) {
+        this.nEnd = ( this.nEnd + this.nStep/50 ) % this.nMax;
+
+        this.mesh.geometry.setDrawRange( 0, this.nEnd );
+      }
+
 
   }
 
@@ -170,6 +214,7 @@ export default class RouteRenderer extends AbstractRenderer {
 
   start() {
     this.scene.add(this.route);
+    this.scene.add(this.mesh);
     this.scene.add(new THREE.AmbientLight(0xeeeeee));
   }
 }
