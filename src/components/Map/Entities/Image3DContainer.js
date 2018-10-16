@@ -77,11 +77,7 @@ export default class Image3DContainer extends THREE.Group {
     ) {
       let object = this.children[i];
 
-      console.log(j);
-      console.log(j);
-      console.log(j);
-
-      move_objects_to_path(object, this.trackcurve.getPoint(j));
+      move_objects_to_path(object, this.trackcurve.getPointAt(j));
 
       j += step;
     }

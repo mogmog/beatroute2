@@ -19,19 +19,14 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     this.vertexIdx = 0;
     this.ambient = null; // three.js ambient light source
 
-
-
-
     this.geo = [
       [-110.7395240072906, 32.33625842258334, 21950],
       [-110.7395240072906, 32.33625842258334, 21890],
-
-    ].map((x) => {
-      x[0] = x[0] + 2 * ((Math.random() / 10));
-      x[1] = x[1] + 1.5 * ((Math.random() / 10));
+    ].map(x => {
+      x[0] = x[0] + 2 * (Math.random() / 10);
+      x[1] = x[1] + 1.5 * (Math.random() / 10);
       return x;
     });
-
   }
 
   /**
@@ -58,17 +53,17 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     var extrudeSettings = {
       steps: 7000,
       bevelEnabled: false,
-      extrudePath: curve
+      extrudePath: curve,
     };
 
     let squareShape = new THREE.Shape();
-    squareShape.moveTo( 0,0 );
-    squareShape.lineTo( 0, 520 );
-    squareShape.lineTo( 200, 520 );
-    squareShape.lineTo( 200, 0);
-    squareShape.lineTo( 0, 0 );
+    squareShape.moveTo(0, 0);
+    squareShape.lineTo(0, 520);
+    squareShape.lineTo(200, 520);
+    squareShape.lineTo(200, 0);
+    squareShape.lineTo(0, 0);
 
-    const geometry = new THREE.ExtrudeBufferGeometry( squareShape, extrudeSettings );
+    const geometry = new THREE.ExtrudeBufferGeometry(squareShape, extrudeSettings);
 
     this.route = new THREE.Mesh(
       geometry,
@@ -93,6 +88,8 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
     this.renderer.autoClearDepth = false;
     this.renderer.autoClearStencil = false;
     this.renderer.autoClearColor = false;
+
+    this.renderer.localClippingEnabled = true; // need fo clipping plane usage
 
     // The ArcGIS JS API renders to custom offscreen buffers, and not to the default framebuffers.
     // We have to inject this bit of code into the three.js runtime in order for it to bind those
@@ -124,7 +121,6 @@ export default class CameraTrackRenderer2 extends AbstractRenderer {
 
     // cleanup after ourselfs
     context.resetWebGLState();
-
   }
 
   onRequestAnimationFrame(time) {

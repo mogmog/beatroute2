@@ -51,6 +51,8 @@ export default class CameraTrackRenderer extends AbstractRenderer {
     this.renderer.autoClearStencil = false;
     this.renderer.autoClearColor = false;
 
+    this.renderer.localClippingEnabled = true; // need fo clipping plane usage
+
     // The ArcGIS JS API renders to custom offscreen buffers, and not to the default framebuffers.
     // We have to inject this bit of code into the three.js runtime in order for it to bind those
     // buffers instead of the default ones.
@@ -116,8 +118,6 @@ export default class CameraTrackRenderer extends AbstractRenderer {
   }
 
   onRequestAnimationFrame(time) {
-
-
     //nothing to animate route
     // wrote you code that update object on requestAnimationFrame
     // because it will be much smooth that in render callback

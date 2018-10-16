@@ -48,18 +48,18 @@ export default class MapHolder extends Component {
       )
       .then(
         ([
-           declare,
-           esriRequest,
-           WebMap,
-           SceneView,
-           BaseTileLayer,
-           GraphicsLayer,
-           Extent,
-           externalRenderers,
-           SpatialReference,
-           geometryEngine,
-           Graphic,
-         ]) => {
+          declare,
+          esriRequest,
+          WebMap,
+          SceneView,
+          BaseTileLayer,
+          GraphicsLayer,
+          Extent,
+          externalRenderers,
+          SpatialReference,
+          geometryEngine,
+          Graphic,
+        ]) => {
           // redefine base method
           var externalRenderers_base_add = externalRenderers.add.bind(externalRenderers);
           externalRenderers.add = function(view, renderer) {
@@ -134,18 +134,17 @@ export default class MapHolder extends Component {
           map.add(graphicsLayer);
 
           var initCam = {
-
             position: {
               spatialReference: { latestWkid: 3857, wkid: 102100 },
               latitude: 121.6324102319777,
               longitude: 25.06283956579864,
-              z: 400  // altitude in meters
-            }
+              z: 400, // altitude in meters
+            },
           };
 
           const view = new SceneView({
             map: map,
-            center : [121.6324102319777, 25.06283956579864, 200],
+            center: [121.6324102319777, 25.06283956579864, 200],
             container: 'viewDiv',
             Xcamera: initCam,
             viewingMode: 'local',
@@ -210,28 +209,26 @@ export default class MapHolder extends Component {
           const routeRenderer = new RouteRenderer(self.esriLoaderContext);
           //const imageRenderer = new ImageRenderer(self.esriLoaderContext, images, curve);
 
-
           externalRenderers.add(view, routeRenderer);
           //externalRenderers.add(view, imageRenderer);
 
-          var xDown = null;
-          var yDown = null;
-
           function handleTouchStart(evt) {
-            xDown = evt.touches[0].clientX;
-            yDown = evt.touches[0].clientY;
+            handleTouchStart.xDown = evt.touches[0].clientX;
+            handleTouchStart.yDown = evt.touches[0].clientY;
           }
+          handleTouchStart.xDown = null;
+          handleTouchStart.yDown = null;
 
           function handleTouchMove(evt) {
-            if (!xDown || !yDown) {
+            if (!handleTouchStart.xDown || !handleTouchStart.yDown) {
               return;
             }
 
             var xUp = evt.touches[0].clientX;
             var yUp = evt.touches[0].clientY;
 
-            var xDiff = xDown - xUp;
-            var yDiff = yDown - yUp;
+            var xDiff = handleTouchStart.xDown - xUp;
+            var yDiff = handleTouchStart.yDown - yUp;
 
             if (Math.abs(xDiff) > Math.abs(yDiff)) {
               /*most significant*/
@@ -252,8 +249,8 @@ export default class MapHolder extends Component {
               }
             }
             /* reset values */
-            xDown = null;
-            yDown = null;
+            handleTouchStart.xDown = null;
+            handleTouchStart.yDown = null;
           }
 
           function getMouse(event) {
