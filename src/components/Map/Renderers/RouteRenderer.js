@@ -82,8 +82,7 @@ export default class RouteRenderer extends AbstractRenderer {
       [121.62715938873589, 25.05507532507181, 32.20000076293945],
       [121.627043383196, 25.055096363648772, 30],
       [121.62687281146646, 25.055104745551944, 30.600000381469727],
-      [121.62677122280002, 25.055074654519558, 30.799999237060547],
-      [121.62677122280002, 25.06334876641631, 19.799999237060547],
+      [121.6230941952765, 25.06334876641631, 19.799999237060547],
     ];
   }
 
@@ -220,7 +219,7 @@ export default class RouteRenderer extends AbstractRenderer {
 
             #include <clipping_planes_fragment>
 
-            if (v_current_length_normalized > progress)
+            if (v_current_length_normalized >= progress)
             {
               discard;
               return;
@@ -276,7 +275,7 @@ export default class RouteRenderer extends AbstractRenderer {
 
     //lat longs
     const curve_path = [];
-    const simplificationTolerance = 0.0002;
+    const simplificationTolerance = 0.0001;
 
     let geojson = turf.lineString(this.geo_curve_path);
     let options = { tolerance: simplificationTolerance, highQuality: true };
@@ -292,15 +291,15 @@ export default class RouteRenderer extends AbstractRenderer {
 
     var extrudeSettings = {
       steps: 30,
-      bevelEnabled: false,
+      bevelEnabled: false, // this be always false in ExtrudeBufferGeometryWithLength
       extrudePath: curve,
     };
 
-    let squareShape = new THREE.Shape();
+    const squareShape = new THREE.Shape();
     squareShape.moveTo(0, 0);
-    squareShape.lineTo(0, 30);
-    squareShape.lineTo(10, 30);
-    squareShape.lineTo(10, 0);
+    squareShape.lineTo(0, 20);
+    squareShape.lineTo(4, 20);
+    squareShape.lineTo(4, 0);
     squareShape.lineTo(0, 0);
 
     const geometry = new THREE.ExtrudeBufferGeometry(squareShape, extrudeSettings);
@@ -321,7 +320,7 @@ export default class RouteRenderer extends AbstractRenderer {
       color: 0xffdb58,
       side: THREE.FrontSide,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.6,
     });
 
     // mesh
@@ -387,7 +386,8 @@ export default class RouteRenderer extends AbstractRenderer {
     if (this.mesh) {
       this.currentStep += 0.001;
 
-      if (this.currentStep > 1.0) this.currentStep = 0.0;
+      if (this.currentStep > 1.0) 
+        this.currentStep = 0.0;
 
       this.mesh.setProgress(this.currentStep);
     }
@@ -866,6 +866,20 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
     var currentLength = 0;
     var fullLength = 0;
 
+    var vertices_max = 
+    {
+      x : 0,
+      y : 0
+    };
+
+    for ( i = 0; i < vlen; i ++ ) {
+
+      vert = bevelEnabled ? scalePt2( vertices[ i ], verticesMovements[ i ], bs ) : vertices[ i ];
+
+      vertices_max.x = Math.max(vertices_max.x, vert.x);
+      vertices_max.y = Math.max(vertices_max.y, vert.y);
+    }
+
     for ( let i = 1; i < extrudePts.length; i++ )
     {
         let a = new THREE.Vector3().copy( extrudePts[ i - 1 ] );
@@ -893,7 +907,9 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
 
         position2.copy( extrudePts[ 0 ] ).add( normal ).add( binormal );
 
-        v( position2.x, position2.y, position2.z, currentLength );
+        let length = currentLength / fullLength;
+
+        v( position2.x, position2.y, position2.z, length);
 
       }
 
@@ -906,11 +922,10 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
 
     for ( s = 1; s <= steps; s ++ ) {
 
+      let a = new THREE.Vector3().copy( extrudePts[ s - 1 ] );
+      let b = new THREE.Vector3().copy( extrudePts[ s ] );
 
-      let a = new THREE.Vector3().copy( extrudePts[ i - 1 ] );
-      let b = new THREE.Vector3().copy( extrudePts[ i ] );
-
-      let length = a.distanceTo( b );
+      currentLength += a.distanceTo( b );;
 
       for ( i = 0; i < vlen; i ++ ) {
 
@@ -929,13 +944,13 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
 
           position2.copy( extrudePts[ s ] ).add( normal ).add( binormal );
 
-          v( position2.x, position2.y, position2.z, currentLength / fullLength );
+          let length = currentLength / fullLength;
+          
+          v( position2.x, position2.y, position2.z, length );
 
         }
 
       }
-
-      currentLength += length;
 
     }
 
@@ -1076,10 +1091,7 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
 
       }
 
-
       scope.addGroup( start, verticesArray.length / 3 - start, 1 );
-
-
     }
 
     function sidewalls( contour, layeroffset ) {
@@ -1147,9 +1159,9 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
       addVertex( b );
       addVertex( d );
 
-      addVertex( b );
-      addVertex( c );
-      addVertex( d );
+      addVertex( b, 0 );
+      addVertex( c, 0 );
+      addVertex( d, 0 );
 
 
       var nextIndex = verticesArray.length / 3;
@@ -1171,7 +1183,9 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
       verticesArray.push( placeholder[ index * 3 + 1 ] );
       verticesArray.push( placeholder[ index * 3 + 2 ] );
 
-      currentLengthNormalizedArray.push( placeholder_length[ index ] );
+      let length = placeholder_length[ index ];
+
+      currentLengthNormalizedArray.push( length );
     }
 
     function addUV( vector2 ) {

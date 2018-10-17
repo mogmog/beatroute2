@@ -20,7 +20,7 @@ export default class Image3D extends THREE.Mesh {
       texture = textureLoader.load(this.config.url);
     }
 
-    let geometry = new THREE.BoxGeometry(800, 1300, 50, 1, 1, 1);
+    let geometry = new THREE.BoxGeometry(200, 320, 20, 1, 1, 1);
 
     let material = new THREE.MeshBasicMaterial({
       map: texture,

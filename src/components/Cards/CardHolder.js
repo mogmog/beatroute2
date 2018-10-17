@@ -8,13 +8,14 @@ import Swipeable from 'react-swipeable';
 import {Motion, spring} from 'react-motion';
 
 import {EditorState, convertFromRaw, convertToRaw} from 'draft-js'
+import ItinaryEditor from "../Itinary/ItinaryEditor";
 
 class CardHolder extends Component {
   constructor(props) {
     super(props);
   }
 
-  state = { cardsUp: false, editorState : EditorState.createWithContent(convertFromRaw({"blocks":[{"key":"aod7o","text":"Day 1 we leave the hotel and begin the trip","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":0,"length":15,"key":0}],"data":{}}],"entityMap":{"0":{"type":"mention","mutability":"SEGMENTED","data":{"mention":{"name":"Shabazz Suleman","link":"https://twitter.com/mrussell247","avatar":"https://pbs.twimg.com/profile_images/517863945/mattsailing_400x400.jpg"}}}}})) };
+  state = { cardsUp: false, editorState : (convertFromRaw({"blocks":[{"key":"e4brl","text":"The Pass and Wondferful Roman Early Church ","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[{"offset":0,"length":8,"key":0},{"offset":13,"length":29,"key":1}],"data":{}}],"entityMap":{"0":{"type":"@Bmention","mutability":"SEGMENTED","data":{"mention":{latitude : 25.06334876641631, longitude : 121.6330941952765, name : 'The Pass', url : "https://picsum.photos/512/512/?image=1051" }}},"1":{"type":"@Bmention","mutability":"SEGMENTED","data":{"mention":{latitude : 25.06134876641631, longitude : 121.6010941952765, "name":"Wondferful Roman Early Church","url":"https://picsum.photos/512/512/?image=1052"}}}}})) };
 
   componentDidMount() {
     const {dispatch} = this.props;
@@ -36,14 +37,13 @@ class CardHolder extends Component {
     this.setState({ 'editorState': editorState });
   }
 
-
   render() {
 
     const { cardsUp } = this.state;
 
     return (
       <div className={styles.roleInfo} >
-        <CustomMentionEditor onChange={this.onChange.bind(this)} editorState={ this.state.editorState } />
+        <ItinaryEditor showImage={this.props.showImage} editorState={ this.state.editorState } />
       </div>
 
     );

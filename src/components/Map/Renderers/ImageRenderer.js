@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 import AbstractRenderer from './AbstractRenderer';
 
-import Image3D from '../Entities/Image3D';
+import Image3D from '../Entities/ImageFrame';
 import Image3DContainer from '../Entities/Image3DContainer';
 
 export default class ImageRenderer extends AbstractRenderer {
@@ -35,6 +35,15 @@ export default class ImageRenderer extends AbstractRenderer {
       x[1] = x[1] + Math.random() / 10;
       return x;
     });
+  }
+
+  showImage(image) {
+    const imageOnMap = this.images3dContainer.children.find((_image) => _image.config.url === image.url);
+
+    if (imageOnMap) {
+      imageOnMap.zoomToCamera(this.camera);
+    }
+
   }
 
   /**
@@ -139,11 +148,10 @@ export default class ImageRenderer extends AbstractRenderer {
       transform.fromArray(arr);
       transform.decompose(image3d.position, image3d.quaternion, image3d.scale);
 
-      let rotation = transform;
-      let m2 = new THREE.Matrix4();
+      const m2 = new THREE.Matrix4();
       m2.makeRotationX(THREE.Math.degToRad(90));
-      rotation.multiply(m2);
-      image3d.setRotationFromMatrix(rotation);
+      transform.multiply(m2);
+      image3d.setRotationFromMatrix(transform);
     }
 
     // create curve
@@ -196,19 +204,11 @@ export default class ImageRenderer extends AbstractRenderer {
 
     this.renderer.render(this.scene, this.camera);
 
-    // externalRenderers.requestRender(view); - this is bad practice - endless recursion
-    //
-    // check the MapHolder - animation frame
-
     // cleanup
     context.resetWebGLState();
   }
 
   start() {
-    // for (let i = 0; i < this.images3dArray.length; i++)
-    // {
-    //     this.scene.add(this.images3dArray[i]);
-    // }
 
     this.scene.add(this.route);
 

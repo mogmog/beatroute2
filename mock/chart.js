@@ -178,59 +178,23 @@ radarOriginData.forEach(item => {
   });
 });
 
+
+
 const images3dArray= [
 
   {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
+    url: 'https://picsum.photos/512/512/?image=1051',
+    position: [121.6330941952765, 25.06334876641631, 600.799999237060547],
   },
 
   {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
-  },
-
-  {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
+    url: 'https://picsum.photos/512/512/?image=1052',
+    position: [121.6030941952765, 25.01334876641631, 600.799999237060547],
   },
 
 
 
-  {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
-  },
-
-  {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
-  },
-
-  {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
-  },
-
-  {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
-  },
-
-  {
-    url: 'https://scontent.cdninstagram.com/vp/f78597bc7f4f454d5143dd829eabe441/5C0605D6/t51.2885-15/sh0.08/e35/s640x640/39320117_2156964914572602_6919511335436812288_n.jpg',
-    position: [-110.7395240072906, 32.33625842258334, 2500],
-  }
-
-
-
-].map((x) => {
-  x.position[0] = x.position[0] + ( (Math.random()/10));
-  x.position[1] = x.position[1] + (    (Math.random()/10));
-  return x;
-});
-
-console.log(images3dArray);
+]
 
 const getFakeChartData = {
   images3dArray,
