@@ -75,7 +75,6 @@ class Analysis extends Component {
         </MFB.Menu>
 
         <CardHolder showImage={this.showImage.bind(this)}></CardHolder>
-        <pre> test {JSON.stringify(this.state.image)} </pre>
         <MapHolder image={this.state.image} images={this.props.chart.images3dArray}/>
       </div>
     )

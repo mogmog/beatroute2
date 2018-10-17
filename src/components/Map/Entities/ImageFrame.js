@@ -67,29 +67,17 @@ export default class ImageFrame extends THREE.Group {
 
   mouseover( camera ) {
 
-    this.material.color = new THREE.Color(0x0000ff);
-    this.material.needsUpdate = true;
+    //this.material.color = new THREE.Color(0x0000ff);
+    //this.material.needsUpdate = true;
   }
 
   mouseout( camera ) {
 
-    this.material.color = new THREE.Color(0xffffff);
-    this.material.needsUpdate = true;
+    //this.material.color = new THREE.Color(0xffffff);
+    //this.material.needsUpdate = true;
   }
 
-  mouseup ( camera ) {
-
-    //i think first photo should move to this position
-    //console.log(this.trackcurve.getPoint(0));
-
-    //i think middle photo should move to this position
-    //console.log(this.trackcurve.getPoint(0.5));
-
-    //and last photo should move to this position
-    // console.log(this.trackcurve.getPoint(1));
-
-
-    var trackPoint = this.trackcurve.getPoint(0.1);
+  zoomToCamera ( camera ) {
 
     var action_timeout = 300;
 
@@ -231,5 +219,9 @@ export default class ImageFrame extends THREE.Group {
         delete  action_data.mouseup.action;
       })
       .start();
+  }
+
+  mouseup(camera) {
+    this.zoomToCamera(camera);
   }
 }

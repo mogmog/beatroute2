@@ -319,9 +319,10 @@ export default class MapHolder extends Component {
         latitude: this.props.image.latitude,
       });
 
-      this.esriLoaderContext.view.goTo(point, flyoptions);
 
-      //this.imageRenderer.showImage(this.props.image);
+      //this.esriLoaderContext.view.goTo(point, flyoptions);
+
+      this.imageRenderer.showImage(this.props.image);
     }
   }
 

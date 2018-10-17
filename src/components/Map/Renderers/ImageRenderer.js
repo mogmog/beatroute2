@@ -37,8 +37,13 @@ export default class ImageRenderer extends AbstractRenderer {
     });
   }
 
-  showImage(e) {
-    alert(JSON.stringify(e));
+  showImage(image) {
+    const imageOnMap = this.images3dContainer.children.find((_image) => _image.config.url === image.url);
+
+    if (imageOnMap) {
+      imageOnMap.zoomToCamera(this.camera);
+    }
+
   }
 
   /**
