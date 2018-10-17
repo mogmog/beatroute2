@@ -19,6 +19,7 @@ class Analysis extends Component {
   }
 
   state = {
+    image : null
   };
 
   componentDidMount() {
@@ -44,6 +45,9 @@ class Analysis extends Component {
     clearTimeout(this.timeoutId);
   }
 
+  showImage(e) {
+    this.setState({image : e});
+  }
 
   // /*<MapHolder images={this.props.chart.images3dArray}/>
   render() {
@@ -70,10 +74,9 @@ class Analysis extends Component {
 
         </MFB.Menu>
 
-        <CardHolder></CardHolder>
-
-
-        <MapHolder images={this.props.chart.images3dArray}/>
+        <CardHolder showImage={this.showImage.bind(this)}></CardHolder>
+        <pre> test {JSON.stringify(this.state.image)} </pre>
+        <MapHolder image={this.state.image} images={this.props.chart.images3dArray}/>
       </div>
     )
 

@@ -39,6 +39,7 @@ export default class MapHolder extends Component {
           'esri/layers/BaseTileLayer',
           'esri/layers/GraphicsLayer',
           'esri/geometry/Extent',
+          "esri/geometry/Point",
           'esri/views/3d/externalRenderers',
           'esri/geometry/SpatialReference',
           'esri/geometry/geometryEngine',
@@ -55,6 +56,7 @@ export default class MapHolder extends Component {
           BaseTileLayer,
           GraphicsLayer,
           Extent,
+          Point,
           externalRenderers,
           SpatialReference,
           geometryEngine,
@@ -179,24 +181,13 @@ export default class MapHolder extends Component {
             externalRenderers,
             geometryEngine,
             Graphic,
+            Point,
             view,
           };
 
           const { images } = self.props;
 
-          //console.log("Tuesdays Idea");
-          //for tues
-          //if this was fed with Vectors based from lat longs....then wouldnt they be the mega big numbers I want?
-          //ie use     externalRenderers.toRenderCoordinates(view, posEst, 0, SpatialReference.WGS84, renderPos, 0, 1);
 
-          /*const curveGeo = [
-             [-110.7322940072906, 32.33647342258334, 2500],
-             [-110.7333440072906, 32.33611142258334, 2500],
-             [-110.7395240072906, 32.33695242258334, 2500],
-             [-110.7317340072906, 32.33646642258334, 2500],
-             [-110.7344640072906, 32.33616642258334, 2500],
-             [-110.7318340072906, 32.33625842258334, 2500]
-          ];*/
 
           const curve = new THREE.CatmullRomCurve3([
             new THREE.Vector3(50, -4590, 3900),
@@ -206,11 +197,11 @@ export default class MapHolder extends Component {
             new THREE.Vector3(6550, 1540, 3901),
           ]);
 
-          const routeRenderer = new RouteRenderer(self.esriLoaderContext);
-          //const imageRenderer = new ImageRenderer(self.esriLoaderContext, images, curve);
+          self.routeRenderer = new RouteRenderer(self.esriLoaderContext);
+          self.imageRenderer = new ImageRenderer(self.esriLoaderContext, images, curve);
 
-          externalRenderers.add(view, routeRenderer);
-          //externalRenderers.add(view, imageRenderer);
+          externalRenderers.add(view, self.routeRenderer);
+          externalRenderers.add(view, self.imageRenderer);
 
           function handleTouchStart(evt) {
             handleTouchStart.xDown = evt.touches[0].clientX;
@@ -310,6 +301,28 @@ export default class MapHolder extends Component {
       .catch(err => {
         console.error(err);
       });
+  }
+
+
+  componentDidUpdate(prevProps) {
+    if (this.props.image !== prevProps.image) {
+
+      var flyoptions = {
+        speedFactor: 0.1, // animation is 10 times slower than default
+        easing: "out-quint" ,// easing function to slow down when reaching the target
+        duration : 1000
+      };
+
+      //[121.6330941952765, 25.06334876641631, 600.799999237060547]
+      var point = new this.esriLoaderContext.Point({
+        longitude: 121.6331941952765,
+        latitude: 25.06334876641631,
+      });
+
+      this.esriLoaderContext.view.goTo(point, flyoptions);
+
+      //this.imageRenderer.showImage(this.props.image);
+    }
   }
 
   componentDidMount() {

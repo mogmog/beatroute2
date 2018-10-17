@@ -1,25 +1,31 @@
 import React, {Component} from 'react';
-
+import {Divider} from 'antd';
 import {EditorState, convertFromRaw, convertToRaw} from 'draft-js'
 
+import createToolbarPlugin from 'draft-js-static-toolbar-plugin';
+import createMentionPlugin from 'draft-js-mention-plugin';
 import createAutosavePlugin from '@jimmycode/draft-js-autosave-plugin';
 import Editor from 'draft-js-plugins-editor';
 
-const mySaveFunction = () => { console.log("saving") }
+import gif from './Gif/plugin';
 
-const config = {
-  saveFunction: mySaveFunction,
-  debounceTime: 1000,
-  saveAlways: false
-};
+import emojiStyles from './emojiStyles.less';
 
-console.log(createAutosavePlugin);
+import {
+  ItalicButton,
+  BoldButton,
+  UnderlineButton,
+  UnorderedListButton,
+  OrderedListButton,
+} from 'draft-js-buttons';
 
-const autosavePlugin = createAutosavePlugin(config)
+import Search from "./Search";
+import battleComponent from './Plugins/Battle/Component';
+import BattleEntry from './Plugins/Battle/Entry';
 
-const {
-  SavingComponent
-} = autosavePlugin;
+import editorStyles from './editorStyles.less';
+import buttonStyles from './buttonStyles.less';
+import toolbarStyles from './toolbarStyles.less';
 
 const raw = {
   "entityMap": {},
@@ -36,14 +42,73 @@ const raw = {
   ]
 };
 
+
+
 export default class ItinaryEditor extends Component {
+
+  battleSearchXHR = (Search('/api/real/content', (data) => {
+    this.setState({
+      battles: [{'name' : 'July'}]
+    });
+  }));
+
+  battleSearch = () => {
+    return () => {
+      this.setState({
+        battles: [{'name' : 'July'}]
+      });
+    }
+}
 
   constructor(props) {
     super(props);
+
+    this.mySaveFunction = (editorState) => {
+
+      console.log( ( convertToRaw( editorState.getCurrentContent()) ));
+
+      this.setState({saving : true});
+
+      setTimeout((x) => {
+        this.setState({saving : false});
+      }, 500)
+
+    };
+
+    const config = {
+      saveFunction: this.mySaveFunction,
+      debounceTime: 400,
+      saveAlways: false
+    };
+
+
+    this.autosavePlugin = createAutosavePlugin(config);
+
+    this.battlePlugin = createMentionPlugin(
+      {
+        mentionTrigger: '@B',
+        mentionComponent: battleComponent(this.props.showImage),
+      }
+    );
+
+    this.toolbarPlugin = createToolbarPlugin({
+
+      theme: {buttonStyles, toolbarStyles},
+
+      structure: [
+        BoldButton,
+                ItalicButton,
+        UnderlineButton,
+        UnorderedListButton,
+        OrderedListButton,
+      ]
+    });
+
   }
 
   state = {
-    editorState: EditorState.createWithContent(convertFromRaw( raw )),
+    battles : [{name : 'The Pass', url : "https://picsum.photos/75/75/?image=1051" }, {name : 'Wondferful Roman Early Church', url : "https://picsum.photos/75/75/?image=1052"}],
+    editorState: EditorState.createWithContent(this.props.editorState || convertFromRaw(raw )),
   };
 
   onChange = (editorState) => {
@@ -58,7 +123,10 @@ export default class ItinaryEditor extends Component {
 
   render() {
 
-    const { editorState } = this.state;
+    const { editorState, saving, battles } = this.state;
+    const {Toolbar} = this.toolbarPlugin;
+
+    const BattleSuggestions  = this.battlePlugin.MentionSuggestions;
 
     return (
 
@@ -66,17 +134,27 @@ export default class ItinaryEditor extends Component {
 
         <div onClick={this.focus}>
 
+          <Divider/>
+
           <Editor
-            readOnly={false}
+            readOnly={true}
             editorState={editorState}
             onChange={this.onChange}
-            plugins={[autosavePlugin]}
+            plugins={[this.autosavePlugin, this.toolbarPlugin, this.battlePlugin ]}
             ref={(element) => {
               this.editor = element;
             }}
           />
 
-          <SavingComponent />
+          <BattleSuggestions
+            key={8}
+            entryComponent={BattleEntry}
+            onSearchChange={this.battleSearch}
+            suggestions={battles}
+            XonClose={() => this.setState({battles: []})}
+          />
+
+          {saving && <span>Saving</span>}
 
         </div>
       </div>
