@@ -4,23 +4,6 @@ import {EditorState, convertFromRaw, convertToRaw} from 'draft-js'
 
 import Editor from 'draft-js-plugins-editor';
 
-const MAX_LENGTH = 10;
-
-const raw = {
-  "entityMap": {},
-  "blocks": [
-    {
-      "key": "e4brl",
-      "text": "3 Day Jaunt",
-      "type": "header-one",
-      "depth": 0,
-      "entityRanges": [],
-      "data": {}
-    }
-
-  ]
-};
-
 export default class DescriptionEditor extends Component {
 
   constructor(props) {
@@ -28,7 +11,7 @@ export default class DescriptionEditor extends Component {
   }
 
   state = {
-    editorState: EditorState.createWithContent(convertFromRaw( raw )),
+    editorState : EditorState.createEmpty()
   };
 
   onChange = (editorState) => {
@@ -41,9 +24,16 @@ export default class DescriptionEditor extends Component {
     this.editor.focus();
   };
 
+  componentDidUpdate(prevProps) {
+    if (this.props.selectedStory !== prevProps.selectedStory) {
+      this.setState({editorState : EditorState.createWithContent(convertFromRaw(this.props.selectedStory.description))});
+    }
+  }
+
   render() {
 
-    const { editorState } = this.state;
+    const {selectedStory} = this.props;
+
 
     return (
 
@@ -53,7 +43,7 @@ export default class DescriptionEditor extends Component {
 
           <Editor
             readOnly={false}
-            editorState={editorState}
+            editorState={this.state.editorState}
             onChange={this.onChange}
             plugins={[]}
             ref={(element) => {

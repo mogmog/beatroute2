@@ -1,4 +1,5 @@
 from app import db
+from app.story_models import Story
 
 class Session(db.Model):
     __tablename__ = 'session'
@@ -37,17 +38,12 @@ class Session(db.Model):
                 }
 
 
-association_table = db.Table('userXCountry', db.Model.metadata,
-    db.Column('userId', db.Integer, db.ForeignKey('user.id')),
-    db.Column('countryId', db.Integer, db.ForeignKey('country.id'))
-)
-
 class User(db.Model):
     __tablename__ = 'user'
 
     id        = db.Column(db.Integer, primary_key=True)
     userName  = db.Column(db.String(255))
-    countries = db.relationship("Country", secondary=association_table)
+    #stories = db.relationship("Story")
 
     def __init__(self, userName):
         self.userName = userName
@@ -78,7 +74,6 @@ class User(db.Model):
                    'userid': self.id,
                    'notifyCount': 3,
                    'isAdmin' : True,
-                   'countries' : len(self.countries),
                    'name' : self.userName,
                    'avatar': 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
                 }

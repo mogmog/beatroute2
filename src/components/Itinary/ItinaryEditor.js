@@ -137,7 +137,7 @@ export default class ItinaryEditor extends Component {
           <Divider/>
 
           <Editor
-            readOnly={true}
+            readOnly={false}
             editorState={editorState}
             onChange={this.onChange}
             plugins={[this.autosavePlugin, this.toolbarPlugin, this.battlePlugin ]}
@@ -149,7 +149,7 @@ export default class ItinaryEditor extends Component {
           <BattleSuggestions
             key={8}
             entryComponent={BattleEntry}
-            onSearchChange={this.battleSearch}
+            onSearchChange={()=> {}}
             suggestions={battles}
             XonClose={() => this.setState({battles: []})}
           />

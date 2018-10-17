@@ -19,7 +19,7 @@ export default {
         },
         locale: {
           enable: true, // default false
-          default: 'zh-CN', // default zh-CN
+          default: 'en-GB', // default zh-CN
           baseNavigator: true, // default true, when it is true, will use `navigator.language` overwrite default
         },
         dynamicImport: {
@@ -56,9 +56,7 @@ export default {
   theme: {
     'primary-color': defaultSettings.primaryColor,
   },
-  externals: {
-    '@antv/data-set': 'DataSet',
-  },
+
   ignoreMomentLocale: true,
   lessLoaderOptions: {
     javascriptEnabled: true,

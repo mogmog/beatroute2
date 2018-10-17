@@ -5,7 +5,7 @@ const battleComponent = (showImage) => (mentionProps) => {
   return (
     <span className={'mention'} style={{ "userSelect": 'none'}}
           onClick={() => {
-            showImage(mentionProps.mention);
+            showImage && showImage(mentionProps.mention);
           }}
     >
 

@@ -1,9 +1,9 @@
 import request from '@/utils/request';
 
 export async function query() {
-  return request('/api/users');
+  return request('/api/real/users');
 }
 
 export async function queryCurrent() {
-  return request('/api/currentUser');
+  return request('/api/real/currentUser');
 }

@@ -82,7 +82,8 @@ export default class RouteRenderer extends AbstractRenderer {
       [121.62715938873589, 25.05507532507181, 32.20000076293945],
       [121.627043383196, 25.055096363648772, 30],
       [121.62687281146646, 25.055104745551944, 30.600000381469727],
-      [121.6230941952765, 25.06334876641631, 19.799999237060547],
+      [121.7230941952765, 25.06934876641631, 19.799999237060547],
+
     ];
   }
 
@@ -386,8 +387,8 @@ export default class RouteRenderer extends AbstractRenderer {
     if (this.mesh) {
       this.currentStep += 0.001;
 
-      if (this.currentStep > 1.0) 
-        this.currentStep = 0.0;
+      //if (this.currentStep > 1.0)
+      //  this.currentStep = 0.0;
 
       this.mesh.setProgress(this.currentStep);
     }
@@ -866,7 +867,7 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
     var currentLength = 0;
     var fullLength = 0;
 
-    var vertices_max = 
+    var vertices_max =
     {
       x : 0,
       y : 0
@@ -945,7 +946,7 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
           position2.copy( extrudePts[ s ] ).add( normal ).add( binormal );
 
           let length = currentLength / fullLength;
-          
+
           v( position2.x, position2.y, position2.z, length );
 
         }

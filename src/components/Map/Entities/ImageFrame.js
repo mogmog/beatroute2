@@ -95,6 +95,8 @@ export default class ImageFrame extends THREE.Group {
         isFitToCamera : true
       };
     }
+
+
     else if (action_data.mouseup.state.isFitToCamera) //
     {
       action_data.mouseup.state.isFitToCamera = false;
@@ -103,6 +105,8 @@ export default class ImageFrame extends THREE.Group {
     {
       action_data.mouseup.state.isFitToCamera = true;
     }
+
+
 
     var fitObjectToCamera = function ( camera, object, parameters ) {
 
