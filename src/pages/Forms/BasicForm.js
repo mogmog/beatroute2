@@ -42,6 +42,15 @@ class SiderDemo extends React.Component {
     this.setState({"selectedStory" : story});
   }
 
+  updateStory = (story) => {
+
+    const {dispatch} = this.props;
+    dispatch({
+      type: 'story/update',
+      payload: story
+    });
+  }
+
   render() {
 
     const { story  } = this.props;
@@ -74,7 +83,7 @@ class SiderDemo extends React.Component {
             <Content style={{margin: '16px 16px'}}>
 
               <div style={{padding: 24, background: '#fff', minHeight: 100}}>
-                <StoryTabs selectedStory={selectedStory}/>
+                <StoryTabs updateStory={this.updateStory} selectedStory={selectedStory}/>
               </div>
 
             </Content>

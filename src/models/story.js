@@ -1,4 +1,4 @@
-import {query} from '../services/story';
+import { query, update } from '../services/story';
 
 export default {
   namespace: 'story',
@@ -17,6 +17,14 @@ export default {
       });
     },
 
+    * update({payload}, {call, put}) {
+      const response = yield call(update, payload);
+      yield put({
+        type: 'saveupdate',
+        payload: response,
+      });
+    },
+
   },
 
   reducers: {
@@ -25,6 +33,15 @@ export default {
         ...state,
         list: action.payload && typeof(action.payload.list === 'Array') ? action.payload.list : [],
       };
+    },
+
+    saveupdate(state, action) {
+      return {
+        ...state,
+        list: action.payload && typeof(action.payload.list === 'Array') ? action.payload.list : [],
+      };
     }
+
+
   }
 };

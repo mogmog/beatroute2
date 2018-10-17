@@ -5,6 +5,7 @@ import { Layout, Menu, Breadcrumb, Icon, Tabs, Button, Row, Col, Divider } from 
 import ItinaryEditor from "../../components/Itinary/ItinaryEditor";
 import LocationDefineMap from "../../components/Map/Admin/LocationDefineMap";
 import DescriptionEditor from "../../components/Description/DescriptionEditor";
+import RouteDefineMap from "../Map/Admin/RouteDefineMap";
 
 const TabPane = Tabs.TabPane;
 
@@ -16,14 +17,14 @@ export default class StoryTabs extends Component {
 
   render() {
 
-    const { list, selectedStory } = this.props;
+    const { list, selectedStory, updateStory } = this.props;
 
     if (!selectedStory) return <span>Select a trip on lhs</span>
     return (
 
       <Tabs defaultActiveKey="1">
         <TabPane tab="Description" key="1">
-          <DescriptionEditor selectedStory={selectedStory}/>
+          <DescriptionEditor updateStory={updateStory} selectedStory={selectedStory}/>
         </TabPane>
 
         <TabPane tab="Itinary" key="2">
@@ -33,9 +34,9 @@ export default class StoryTabs extends Component {
             tabPosition={"left"}
             style={{ height: 600 }}
           >
-            <TabPane tab="Day 1" key="1"> <ItinaryEditor> </ItinaryEditor> </TabPane>
-            <TabPane tab="Day 2" key="2"> <ItinaryEditor> </ItinaryEditor> </TabPane>
-            <TabPane tab="Day 3" key="3"> <ItinaryEditor> </ItinaryEditor> </TabPane>
+            <TabPane tab="Day 1" key="1"> <ItinaryEditor> </ItinaryEditor> <RouteDefineMap /> </TabPane>
+            <TabPane tab="Day 2" key="2"> <ItinaryEditor> </ItinaryEditor>   </TabPane>
+            <TabPane tab="Day 3" key="3"> <ItinaryEditor> </ItinaryEditor>  </TabPane>
             <TabPane tab={ <Button size="small" type="primary" shape="circle" icon="plus" /> } key="4"></TabPane>
 
           </Tabs>
@@ -76,6 +77,7 @@ export default class StoryTabs extends Component {
 
             <TabPane tab="Videos" key="2"> Videos here </TabPane>
             <TabPane tab="POI" key="3"> Places of interest </TabPane>
+            <TabPane tab="Segments" key="4"> Segments</TabPane>
 
           </Tabs>
         </TabPane>

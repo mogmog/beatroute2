@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort, make_response
 import os
+import json
 
 db = SQLAlchemy()
 
@@ -60,7 +61,32 @@ def create_app(config_name):
         return make_response(response), 200
 
 
-    @app.route('/api/real/story', methods=['POST'])
+    @app.route('/api/real/story/update', methods=['POST'])
+    def update_story():
+
+      data = (request.json)
+
+
+      id = data.get('id')
+      title = data.get('title')
+      description = data.get('description')
+
+      story = Story.get_all().filter(Story.id == id).first()
+
+      print (description)
+      story.description = description
+      story.title = title
+      story.save()
+
+      stories = Story.get_all().order_by(Story.id)
+
+      results = []
+      for story in stories:
+       results.append(story.serialise())
+
+      return make_response(jsonify({ 'list' : results })), 200
+
+    @app.route('/api/real/story/create', methods=['POST'])
     def create_story():
 
       userId = request.data.get('userId', 0)
@@ -69,7 +95,7 @@ def create_app(config_name):
       story = Story(title)
       story.save()
 
-      stories = Story.get_all().all()
+      stories = Story.get_all().order_by(Story.id)
 
       results = []
       for story in stories:
@@ -81,7 +107,7 @@ def create_app(config_name):
     @app.route('/api/real/story', methods=['GET'])
     def list_stories():
 
-      stories = Story.get_all()
+      stories = Story.get_all().order_by(Story.id)
 
       results = []
       for story in stories:

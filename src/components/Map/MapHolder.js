@@ -38,8 +38,11 @@ export default class MapHolder extends Component {
           'esri/views/SceneView',
           'esri/layers/BaseTileLayer',
           'esri/layers/GraphicsLayer',
+          'esri/layers/ElevationLayer',
           'esri/geometry/Extent',
+          'esri/geometry/Multipoint',
           "esri/geometry/Point",
+          "esri/geometry/Polyline",
           'esri/views/3d/externalRenderers',
           'esri/geometry/SpatialReference',
           'esri/geometry/geometryEngine',
@@ -55,8 +58,11 @@ export default class MapHolder extends Component {
           SceneView,
           BaseTileLayer,
           GraphicsLayer,
+          ElevationLayer,
           Extent,
+          Multipoint,
           Point,
+          Polyline,
           externalRenderers,
           SpatialReference,
           geometryEngine,
@@ -68,6 +74,7 @@ export default class MapHolder extends Component {
             externalRenderers_base_add(view, renderer);
             self.externalRenderersContainer.push(renderer);
           };
+
 
           const GreyLayer = BaseTileLayer.createSubclass({
             properties: {
@@ -126,6 +133,11 @@ export default class MapHolder extends Component {
             title: 'Black and White',
           });
 
+          var worldGround = new ElevationLayer({
+            url: "http://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer",
+            visible : false,
+          });
+
           const map = new WebMap({
             basemap: 'satellite',
             ground: 'world-elevation',
@@ -165,12 +177,17 @@ export default class MapHolder extends Component {
             },
           });
 
-          // Set the extent on the view
+          var polyline = {
+            type: "polyline",
+            paths: [
+              [-0.178, 51.48791],
+              [-0.178, 52.48791]
+            ]
+          };
 
-          // view.on("drag", function(event){
-          //   // prevents panning with the mouse drag event
-          //   event.stopPropagation();
-          // });
+          worldGround.queryElevation(new Polyline(polyline)).then((result) => {
+            console.log(result);
+          })
 
           self.esriLoaderContext = {
             declare,
@@ -186,8 +203,6 @@ export default class MapHolder extends Component {
           };
 
           const { images } = self.props;
-
-
 
           const curve = new THREE.CatmullRomCurve3([
             new THREE.Vector3(50, -4590, 3900),

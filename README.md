@@ -40,7 +40,11 @@ git clone https://github.com/mogmog/beatroute2.git
   From the resulting prompt:
   
   ALTER USER postgres PASSWORD 'postgres';
-  CREATE DATABASE tracker;
+  CREATE DATABASE beatroute2;
+  
+  update pg_database set encoding = pg_char_to_encoding('UTF8') where datname = 'beatroute2';
+
+  
    
   (control d to exit)
   
