@@ -46,19 +46,19 @@ const raw = {
 
 export default class ItinaryEditor extends Component {
 
-  battleSearchXHR = (Search('/api/real/content', (data) => {
-    this.setState({
-      battles: [{'name' : 'July'}]
-    });
-  }));
-
-  battleSearch = () => {
-    return () => {
-      this.setState({
-        battles: [{'name' : 'July'}]
-      });
-    }
-}
+//   battleSearchXHR = (Search('/api/real/content', (data) => {
+//     this.setState({
+//       battles: [{'name' : 'July'}]
+//     });
+//   }));
+//
+//   battleSearch = () => {
+//     return () => {
+//       this.setState({
+//         battles: [{'name' : 'July'}]
+//       });
+//     }
+// }
 
   constructor(props) {
     super(props);
@@ -107,7 +107,7 @@ export default class ItinaryEditor extends Component {
   }
 
   state = {
-    battles : [{name : 'The Pass', url : "https://picsum.photos/75/75/?image=1051" }, {name : 'Wondferful Roman Early Church', url : "https://picsum.photos/75/75/?image=1052"}],
+    battles : [{latitude : 25.06334876641631, longitude : 121.6330941952765, name : 'The Pass', url : "https://picsum.photos/75/75/?image=1051" }, {latitude : 25.06134876641631, longitude : 121.6320941952765, name : 'Wondferful Roman Early Church', url : "https://picsum.photos/75/75/?image=1052"}],
     editorState: EditorState.createWithContent(this.props.editorState || convertFromRaw(raw )),
   };
 

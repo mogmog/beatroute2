@@ -315,8 +315,8 @@ export default class MapHolder extends Component {
 
       //[121.6330941952765, 25.06334876641631, 600.799999237060547]
       var point = new this.esriLoaderContext.Point({
-        longitude: 121.6331941952765,
-        latitude: 25.06334876641631,
+        longitude: this.props.image.longitude,
+        latitude: this.props.image.latitude,
       });
 
       this.esriLoaderContext.view.goTo(point, flyoptions);
