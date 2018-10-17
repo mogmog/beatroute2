@@ -1159,9 +1159,9 @@ THREE.ExtrudeBufferGeometryWithLength = function( shapes, options ) {
       addVertex( b );
       addVertex( d );
 
-      addVertex( b, 0 );
-      addVertex( c, 0 );
-      addVertex( d, 0 );
+      addVertex( b );
+      addVertex( c );
+      addVertex( d );
 
 
       var nextIndex = verticesArray.length / 3;
