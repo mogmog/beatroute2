@@ -81,9 +81,6 @@ export default class RouteRenderer extends AbstractRenderer {
       [121.62720968015492, 25.055059734731913, 33.79999923706055],
       [121.62715938873589, 25.05507532507181, 32.20000076293945],
       [121.627043383196, 25.055096363648772, 30],
-      [121.62687281146646, 25.055104745551944, 30.600000381469727],
-      [121.7230941952765, 25.06934876641631, 19.799999237060547],
-
     ];
   }
 
@@ -291,7 +288,7 @@ export default class RouteRenderer extends AbstractRenderer {
     const curve = new THREE.CatmullRomCurve3(curve_path);
 
     var extrudeSettings = {
-      steps: 30,
+      steps: 150,
       bevelEnabled: false, // this be always false in ExtrudeBufferGeometryWithLength
       extrudePath: curve,
     };
@@ -384,8 +381,9 @@ export default class RouteRenderer extends AbstractRenderer {
   }
 
   onRequestAnimationFrame(time) {
-    if (this.mesh) {
-      this.currentStep += 0.001;
+    if (this.mesh) 
+    {
+      this.currentStep += 0.002;
 
       //if (this.currentStep > 1.0)
       //  this.currentStep = 0.0;

@@ -216,7 +216,9 @@ export default class MapHolder extends Component {
           self.imageRenderer = new ImageRenderer(self.esriLoaderContext, images, curve);
 
           externalRenderers.add(view, self.routeRenderer);
-          externalRenderers.add(view, self.imageRenderer);
+
+          if (self.imageRenderer)
+            externalRenderers.add(view, self.imageRenderer);
 
           function handleTouchStart(evt) {
             handleTouchStart.xDown = evt.touches[0].clientX;
@@ -320,6 +322,7 @@ export default class MapHolder extends Component {
 
 
   componentDidUpdate(prevProps) {
+
     if (this.props.image !== prevProps.image) {
 
       var flyoptions = {
@@ -337,7 +340,8 @@ export default class MapHolder extends Component {
 
       //this.esriLoaderContext.view.goTo(point, flyoptions);
 
-      this.imageRenderer.showImage(this.props.image);
+      if (this.imageRenderer)
+        this.imageRenderer.showImage(this.props.image);
     }
   }
 

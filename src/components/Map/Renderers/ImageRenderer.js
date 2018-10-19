@@ -6,7 +6,8 @@ import * as THREE from 'three';
 
 import AbstractRenderer from './AbstractRenderer';
 
-import Image3D from '../Entities/ImageFrame';
+import Image3D from '../Entities/Image3D';
+import ImageFrame from '../Entities/ImageFrame';
 import Image3DContainer from '../Entities/Image3DContainer';
 
 export default class ImageRenderer extends AbstractRenderer {
@@ -38,6 +39,7 @@ export default class ImageRenderer extends AbstractRenderer {
   }
 
   showImage(image) {
+
     const imageOnMap = this.images3dContainer.children.find((_image) => _image.config.url === image.url);
 
     if (imageOnMap) {
@@ -116,13 +118,15 @@ export default class ImageRenderer extends AbstractRenderer {
 
     this.images3dContainer = new Image3DContainer(curve);
 
-    let imgs = this.images.map(image => new Image3D(image));
+    let imgs = this.images.map(image => new ImageFrame(image));
 
-    for (let i = 0; i < imgs.length; i++) {
+    for (let i = 0; i < imgs.length; i++) 
+    {
       this.images3dContainer.add(imgs[i]);
     }
 
-    for (let i = 0; i < this.images3dContainer.children.length; i++) {
+    for (let i = 0; i < this.images3dContainer.children.length; i++) 
+    {
       let image3d = this.images3dContainer.children[i];
 
       let pos = [0, 0, 0];

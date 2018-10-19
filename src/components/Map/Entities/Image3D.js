@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import * as TWEEN from '@tweenjs/tween.js';
 
 export default class Image3D extends THREE.Mesh {
+
   constructor(config) {
     // url, position
 
@@ -45,20 +46,30 @@ export default class Image3D extends THREE.Mesh {
     };
   }
 
-  mouseover(camera) {
+  mouseover(event) {
     this.material.color = new THREE.Color(0x0000ff);
     this.material.needsUpdate = true;
+    return true;
   }
 
-  mouseout(camera) {
+  mouseout(event) {
     this.material.color = new THREE.Color(0xffffff);
     this.material.needsUpdate = true;
+    return true;
   }
 
-  mouseup(camera) {
-    var action_timeout = 300;
+  mouseup(event) {
 
-    var object = this;
+    var camera = event.camera;
+
+    Image3D.zoomToCamera(this, camera)
+
+    return true;
+  }
+
+  static zoomToCamera ( object, camera ) {
+
+    var action_timeout = 300;
 
     if (!object.action_data)
       object.action_data = {
@@ -69,58 +80,23 @@ export default class Image3D extends THREE.Mesh {
 
     var action_data = object.action_data;
 
-    if (action_data.mouseup.action) return;
+    if (action_data.mouseup.action) 
+      action_data.mouseup.action.stop();
 
-    if (!action_data.mouseup.state) {
+    if (!action_data.mouseup.state) 
+    {
       action_data.mouseup.state = {
         isFitToCamera: true,
       };
-    } else if (action_data.mouseup.state.isFitToCamera) {
-      //
+    } 
+    else if (action_data.mouseup.state.isFitToCamera) 
+    {
       action_data.mouseup.state.isFitToCamera = false;
-    } else if (!action_data.mouseup.state.isFitToCamera) {
-      //
+    } 
+    else if (!action_data.mouseup.state.isFitToCamera) 
+    {
       action_data.mouseup.state.isFitToCamera = true;
     }
-
-    var fitObjectToCamera = function(camera, object, parameters) {
-      function visibleBox(camera, z) {
-        var t = Math.tan(THREE.Math.degToRad(camera.fov) / 2);
-        var h = t * 2 * z;
-        var w = h * camera.aspect;
-        return new THREE.Box2(new THREE.Vector2(-w, h), new THREE.Vector2(w, -h));
-      }
-
-      let boundingBox = new THREE.Box3().setFromObject(object);
-
-      var boundingSphere = new THREE.Sphere();
-
-      boundingBox.getBoundingSphere(boundingSphere);
-
-      let center = boundingSphere.center;
-
-      let radius = boundingSphere.radius;
-
-      let dist = 1.0;
-
-      let box = visibleBox(camera, radius / 2);
-
-      var f = (radius * box.min.y) / 2;
-
-      let vector = new THREE.Vector3();
-      camera.getWorldDirection(vector);
-      vector.multiplyScalar(f);
-      vector.add(camera.position);
-
-      var tmp_obj = new THREE.Object3D(); // simplest way to get rotation
-      tmp_obj.position.set(vector.x, vector.y, vector.z);
-      tmp_obj.up.set(camera.up.x, camera.up.y, camera.up.z);
-      tmp_obj.lookAt(camera.position);
-
-      parameters.position = tmp_obj.position;
-      parameters.up = tmp_obj.up;
-      parameters.rotation = tmp_obj.rotation;
-    };
 
     var parameters = {};
     fitObjectToCamera(camera, object, parameters);
@@ -199,3 +175,43 @@ export default class Image3D extends THREE.Mesh {
       .start();
   }
 }
+
+var fitObjectToCamera = function(camera, object, parameters) 
+{
+    function visibleBox(camera, z) {
+      var t = Math.tan(THREE.Math.degToRad(camera.fov) / 2);
+      var h = t * 2 * z;
+      var w = h * camera.aspect;
+      return new THREE.Box2(new THREE.Vector2(-w, h), new THREE.Vector2(w, -h));
+    }
+
+    let boundingBox = new THREE.Box3().setFromObject(object);
+
+    var boundingSphere = new THREE.Sphere();
+
+    boundingBox.getBoundingSphere(boundingSphere);
+
+    let center = boundingSphere.center;
+
+    let radius = boundingSphere.radius;
+
+    let dist = 1.0;
+
+    let box = visibleBox(camera, radius / 2);
+
+    var f = (radius * box.min.y) / 2;
+
+    let vector = new THREE.Vector3();
+    camera.getWorldDirection(vector);
+    vector.multiplyScalar(f);
+    vector.add(camera.position);
+
+    var tmp_obj = new THREE.Object3D(); // simplest way to get rotation
+    tmp_obj.position.set(vector.x, vector.y, vector.z);
+    tmp_obj.up.set(camera.up.x, camera.up.y, camera.up.z);
+    tmp_obj.lookAt(camera.position);
+
+    parameters.position = tmp_obj.position;
+    parameters.up = tmp_obj.up;
+    parameters.rotation = tmp_obj.rotation;
+};

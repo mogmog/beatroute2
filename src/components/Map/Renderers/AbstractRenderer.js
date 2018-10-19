@@ -41,27 +41,24 @@ AbstractRenderer.prototype.onMouseMove = function(mouse, event){
 
     if (this.onMouseMove.current !== object) //
     {
-      if (this.onMouseMove.current &&
-        this.onMouseMove.current.mouseout) //
-      {
-        this.onMouseMove.current.mouseout(camera);
-      }
+      if (this.onMouseMove.current)
+        AbstractRenderer.prototype.___bubble_event(this.onMouseMove.current, "mouseout", {
+          camera : camera
+        });
 
-      if ( object.mouseover ) //
-      {
-        object.mouseover(camera);
-      }
+      AbstractRenderer.prototype.___bubble_event(object, "mouseover", {
+        camera : camera
+      });
 
       this.onMouseMove.current = object
     }
   }
   else {
 
-    if (this.onMouseMove.current &&
-      this.onMouseMove.current.mouseout) //
-    {
-      this.onMouseMove.current.mouseout(camera);
-    }
+    if (this.onMouseMove.current)
+      AbstractRenderer.prototype.___bubble_event(this.onMouseMove.current, "mouseout", {
+        camera : camera
+      });
 
     this.onMouseMove.current = null;
   }
@@ -86,10 +83,9 @@ AbstractRenderer.prototype.onMouseDown = function(mouse, event){
 
       let object = intersects[0].object;
 
-      if ( object.mousedown )
-      {
-        object.mousedown(camera);
-      }
+      AbstractRenderer.prototype.___bubble_event(object, "mousedown", {
+        camera : camera
+      });
     }
   }
 };
@@ -113,12 +109,32 @@ AbstractRenderer.prototype.onMouseUp = function(mouse, event){
 
       let object = intersects[0].object;
 
-      if ( object.mouseup )
-      {
-        object.mouseup(camera);
-      }
+      AbstractRenderer.prototype.___bubble_event(object, "mouseup", {
+        camera : camera
+      });
     }
   }
+};
+
+AbstractRenderer.prototype.___bubble_event = function(object, f_name, event)
+{
+    if (!object)
+      return;
+
+    if (!event.path)
+      event.path = [];
+
+    event.path.push(object);
+
+    if (object[f_name])
+    {
+        let bStopPropagation = object[f_name](event);
+
+        if (bStopPropagation)
+          return;
+    }
+
+    AbstractRenderer.prototype.___bubble_event(object.parent, f_name, event);
 };
 
 export default AbstractRenderer;
