@@ -1,5 +1,5 @@
 import {fakeChartData} from '@/services/api';
-import Image3D from "../../../components/Map/Image3D";
+import Image3D from "../../../components/Map/Entities/Image3D";
 
 export default {
   namespace: 'chart',

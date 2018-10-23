@@ -9,9 +9,13 @@ import AbstractRenderer from './AbstractRenderer';
 import Image3D from '../Entities/Image3D';
 import ImageFrame from '../Entities/ImageFrame';
 import Image3DContainer from '../Entities/Image3DContainer';
+import Image3DContainerCarousel from '../Entities/Image3DContainerCarousel';
 
-export default class ImageRenderer extends AbstractRenderer {
-  constructor(esriLoaderContext, images, trackcurve) {
+export default class ImageRenderer extends AbstractRenderer 
+{
+
+  constructor(esriLoaderContext, images, trackcurve) 
+  {
     super();
 
     this.esriLoaderContext = esriLoaderContext;
@@ -52,12 +56,44 @@ export default class ImageRenderer extends AbstractRenderer {
    * Setup function, called once by the ArcGIS JS API.
    */
   setup(context) {
+
     var self = this;
 
     var externalRenderers = this.esriLoaderContext.externalRenderers;
     var SpatialReference = this.esriLoaderContext.SpatialReference;
 
     var view = context.view; //this.esriLoaderContext.view;
+
+    function setPosition(worldPosition, object3d)
+    {
+      let pos = [0, 0, 0];
+
+      externalRenderers.toRenderCoordinates(
+        view,
+        worldPosition,
+        0,
+        SpatialReference.WGS84,
+        pos,
+        0,
+        1
+      );
+      object3d.position.set(pos[0], pos[1], pos[2]);
+
+      let transform = new THREE.Matrix4();
+      let arr = externalRenderers.renderCoordinateTransformAt(
+        view,
+        worldPosition,
+        SpatialReference.WGS84,
+        new Array(16)
+      );
+      transform.fromArray(arr);
+      transform.decompose(object3d.position, object3d.quaternion, object3d.scale);
+
+      const m2 = new THREE.Matrix4();
+      m2.makeRotationX(THREE.Math.degToRad(90));
+      transform.multiply(m2);
+      object3d.setRotationFromMatrix(transform);
+    }
 
     // initialize the three.js renderer
     //////////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +154,7 @@ export default class ImageRenderer extends AbstractRenderer {
 
     this.images3dContainer = new Image3DContainer(curve);
 
-    let imgs = this.images.map(image => new ImageFrame(image));
+    let imgs = this.images.map(config => new ImageFrame(config));
 
     for (let i = 0; i < imgs.length; i++) 
     {
@@ -129,46 +165,38 @@ export default class ImageRenderer extends AbstractRenderer {
     {
       let image3d = this.images3dContainer.children[i];
 
-      let pos = [0, 0, 0];
-
-      externalRenderers.toRenderCoordinates(
-        view,
-        image3d.config.position,
-        0,
-        SpatialReference.WGS84,
-        pos,
-        0,
-        1
-      );
-      image3d.position.set(pos[0], pos[1], pos[2]);
-
-      let transform = new THREE.Matrix4();
-      let arr = externalRenderers.renderCoordinateTransformAt(
-        view,
-        image3d.config.position,
-        SpatialReference.WGS84,
-        new Array(16)
-      );
-      transform.fromArray(arr);
-      transform.decompose(image3d.position, image3d.quaternion, image3d.scale);
-
-      const m2 = new THREE.Matrix4();
-      m2.makeRotationX(THREE.Math.degToRad(90));
-      transform.multiply(m2);
-      image3d.setRotationFromMatrix(transform);
+      setPosition(image3d.config.position, image3d);
     }
 
     // create curve
+    //var tubeGeometry = new THREE.TubeBufferGeometry(curve, 50, 200, 28, false);
+    //var material = new THREE.MeshNormalMaterial({
+    //  side: THREE.FrontSide,
+    //  transparent: true,
+    //  opacity: 0.3,
+    //});
+    //this.route = new THREE.Mesh(tubeGeometry, material);
 
-    var tubeGeometry = new THREE.TubeBufferGeometry(curve, 50, 200, 28, false);
-    var material = new THREE.MeshNormalMaterial({
-      side: THREE.FrontSide,
-      transparent: true,
-      opacity: 0.3,
-    });
+    if (true)
+    {
 
-    this.route = new THREE.Mesh(tubeGeometry, material);
+      this.images3DContainerCarousel = new Image3DContainerCarousel();
 
+      setPosition(
+        [
+          121.6210941952765,
+          25.06134876641631,
+          600.7899992370605
+        ], this.images3DContainerCarousel);
+
+      let imgs = this.images.map(config => new ImageFrame(config));
+
+      for (let i = 0; i < imgs.length; i++) 
+      {
+        this.images3DContainerCarousel.add(imgs[i]);
+      }
+
+    }
     //
 
     this.start();
@@ -214,9 +242,14 @@ export default class ImageRenderer extends AbstractRenderer {
 
   start() {
 
-    this.scene.add(this.route);
+    // this.scene.add(this.route);
 
     this.scene.add(this.images3dContainer);
+
+    if ( this.images3DContainerCarousel )
+    {
+      this.scene.add(this.images3DContainerCarousel);
+    }
 
     this.scene.add(new THREE.AmbientLight(0xeeeeee));
   }

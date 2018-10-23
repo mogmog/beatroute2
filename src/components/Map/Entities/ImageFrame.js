@@ -28,8 +28,11 @@ export default class ImageFrame extends THREE.Group {
       })
     }
 
-    let framegeometry = new THREE.BoxGeometry(750, 750, 12, 1, 1, 1);
-    let photogeometry = new THREE.BoxGeometry(600, 600, 13, 1, 1, 1);
+    this.width = 750;
+    this.height = 750;
+
+    let framegeometry = new THREE.BoxGeometry(this.width, this.height, 12, 1, 1, 1);
+    let photogeometry = new THREE.BoxGeometry(this.width - 150, this.height - 150, 13, 1, 1, 1);
 
     var framematerial = [
       new THREE.MeshBasicMaterial({  color: 0xffffff, transparent:true, opacity: 0.8, side: THREE.FrontSide,  depthTest: true, depthWrite: true }),

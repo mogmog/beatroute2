@@ -21,11 +21,14 @@ export default class Image3D extends THREE.Mesh {
       texture = textureLoader.load(this.config.url);
     }
 
+    let color = this.config.hasOwnProperty('color') ? this.config.color : 0xffffff;
+    let opacity = this.config.hasOwnProperty('opacity') ? this.config.opacity : 1.0;
+
     let geometry = new THREE.BoxGeometry(200, 320, 20, 1, 1, 1);
 
     let material = new THREE.MeshBasicMaterial({
       map: texture,
-      color: 0xffffff,
+      color: color,
       opacity: 1,
       transparent: true,
       //depthTest: true,
@@ -67,7 +70,7 @@ export default class Image3D extends THREE.Mesh {
     return true;
   }
 
-  static zoomToCamera ( object, camera ) {
+  static zoomToCamera ( object, camera, onComplete ) {
 
     var action_timeout = 300;
 
@@ -128,7 +131,11 @@ export default class Image3D extends THREE.Mesh {
           rot_y: object.rotation.y,
           rot_z: object.rotation.z,
         };
-    } else to = action_data.mouseup.state.originalPosition;
+    } 
+    else
+    {
+      to = action_data.mouseup.state.originalPosition;
+    }
 
     action_data.mouseup.action = new TWEEN.Tween({
       pos_x: object.position.x,
@@ -142,35 +149,44 @@ export default class Image3D extends THREE.Mesh {
       rot_z: object.rotation.z,
     })
       .to(to, action_timeout)
-      .onUpdate(function(obj) {
-        var tween_object = {
-          position: {
-            x: obj.pos_x,
-            y: obj.pos_y,
-            z: obj.pos_z,
-          },
-          up: {
-            x: obj.up_x,
-            y: obj.up_y,
-            z: obj.up_z,
-          },
-          rotation: new THREE.Vector3(obj.rot_x, obj.rot_y, obj.rot_z),
-        };
+      .onUpdate(
+        function(obj) 
+        {
+          var tween_object = {
+            position: {
+              x: obj.pos_x,
+              y: obj.pos_y,
+              z: obj.pos_z,
+            },
+            up: {
+              x: obj.up_x,
+              y: obj.up_y,
+              z: obj.up_z,
+            },
+            rotation: new THREE.Vector3(obj.rot_x, obj.rot_y, obj.rot_z),
+          };
 
-        object.position.set(
-          tween_object.position.x,
-          tween_object.position.y,
-          tween_object.position.z
-        );
-        object.up.set(tween_object.up.x, tween_object.up.y, tween_object.up.z);
-        object.rotation.set(
-          tween_object.rotation.x,
-          tween_object.rotation.y,
-          tween_object.rotation.z
-        );
+          object.position.set(
+            tween_object.position.x,
+            tween_object.position.y,
+            tween_object.position.z
+          );
+          object.up.set(
+            tween_object.up.x,
+            tween_object.up.y,
+            tween_object.up.z
+          );
+          object.rotation.set(
+            tween_object.rotation.x,
+            tween_object.rotation.y,
+            tween_object.rotation.z
+          );
       })
       .onComplete(function() {
         delete action_data.mouseup.action;
+
+        if (onComplete)
+          onComplete();
       })
       .start();
   }
