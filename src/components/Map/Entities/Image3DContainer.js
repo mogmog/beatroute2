@@ -19,6 +19,13 @@ export default class Image3DContainer extends THREE.Group {
 
     self.add = function(object) {
 
+      if (!object.action_data)
+        object.action_data = {
+          mouseover: {},
+          mousedown: {},
+          mouseup: {},
+        };
+
       add_base(object);
 
       object.mouseover = function(){

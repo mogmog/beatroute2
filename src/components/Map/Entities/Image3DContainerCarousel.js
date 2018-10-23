@@ -75,29 +75,6 @@ export default class Image3DContainerCarousel extends Image3DContainer
 
     drawNumber(0);
 
-    function makeGrid()
-    {
-      let objectCount = self.children.length - 1; // -1, because self.groupImage is not used for calc
-
-      let width = 750; // TODO  - remove static size - 750;
-
-      let pos_x = -width / 2 * objectCount; 
-
-      let step = 2 * width;
-
-      for ( let i = 0; i < self.children.length; i++)
-      {
-        let object = self.children[i];
-
-        if (self.groupImage === object)
-          continue;
-
-        object.position.x = pos_x;
-
-        pos_x += step;
-      }
-    }
-
     // now override the base class
 
     var add_base = this.add.bind(self);
@@ -106,11 +83,14 @@ export default class Image3DContainerCarousel extends Image3DContainer
 
       add_base(object);
 
+      object.action_data.grid = {};
+      object.action_data.grid.action = null;
+
       object.visible = false;
 
       let objectCount = self.children.length - 1; // -1, because self.groupImage is not used for calc
 
-      makeGrid();
+      // makeGrid();
 
       drawNumber(objectCount);
     };
@@ -123,7 +103,7 @@ export default class Image3DContainerCarousel extends Image3DContainer
 
       let objectCount = self.children.length - 1;
 
-      makeGrid();
+      // makeGrid();
 
       drawNumber(objectCount);
     };
@@ -143,12 +123,20 @@ export default class Image3DContainerCarousel extends Image3DContainer
   {
     var self = this;
 
-    var camera = event.camera;
-
-    var picked_object = event.path[event.path.length - 2]; // because last - is this object
-
-    if (picked_object == self.groupImage)
+    function makeGrid()
     {
+      let objectCount = self.children.length - 1; // -1, because self.groupImage is not used for calc
+
+      let width = 750; // TODO  - remove static size - 750;
+
+      let margin = 50;
+
+      let pos_x = - ( width + margin ) / 2 * objectCount / 2; 
+
+      let step = width + margin;
+
+      var arr = [];
+
       for ( let i = 0; i < self.children.length; i++)
       {
         let object = self.children[i];
@@ -156,7 +144,60 @@ export default class Image3DContainerCarousel extends Image3DContainer
         if (self.groupImage === object)
           continue;
 
+        arr.push(
+          {
+            object : object,
+            x : pos_x
+          }
+        );
+
+        pos_x += step;
+      }
+
+      return arr;
+    }
+
+    var camera = event.camera;
+
+    var picked_object = event.path[event.path.length - 2]; // because last - is this object
+
+    let grid_action_timeout = 300;
+
+    let grid = makeGrid();
+
+    if (picked_object == self.groupImage)
+    {
+      for ( let i = 0; i < grid.length; i++)
+      {
+        let grid_obj = grid[i];
+
+        let object = grid_obj.object;
+
         object.visible = true;
+
+        if (object.action_data.grid.action)
+          object.action_data.grid.action.stop();
+
+        object.action_data.grid.action = new TWEEN.Tween(
+          {
+            pos_x: object.position.x,
+          })
+          .to(
+          {
+            pos_x : grid_obj.x
+          }, 
+          grid_action_timeout)
+          .onUpdate(
+            function(obj) 
+            {
+              grid_obj.object.position.x = obj.pos_x;
+            })
+          .onComplete(function() {
+
+            delete object.action_data.grid.action;
+          })
+          //.delay(Math.floor(Math.random() * 100))
+          .start();
       }
 
       self.groupImage.visible = false;
@@ -165,6 +206,36 @@ export default class Image3DContainerCarousel extends Image3DContainer
     }
     else
     {
+      for ( let i = 0; i < grid.length; i++)
+      {
+        let grid_obj = grid[i];
+
+        let object = grid_obj.object;
+
+        if (object.action_data.grid.action)
+          object.action_data.grid.action.stop();
+
+        object.action_data.grid.action = new TWEEN.Tween(
+          {
+            pos_x: object.position.x,
+          })
+          .to(
+          {
+            pos_x : 0
+          }, 
+          grid_action_timeout)
+          .onUpdate(
+            function(obj) 
+            {
+              grid_obj.object.position.x = obj.pos_x;
+            })
+          .onComplete(function() {
+
+            delete object.action_data.grid.action;
+          })
+          //.delay(Math.floor(Math.random() * 100))
+          .start();
+      }
 
       Image3D.zoomToCamera(this, camera, function(){
 
