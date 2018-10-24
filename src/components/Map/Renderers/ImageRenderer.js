@@ -206,15 +206,13 @@ export default class ImageRenderer extends AbstractRenderer
     context.resetWebGLState();
   }
 
-  onRequestAnimationFrame(time) {
+  /*update(time) {
     //nothing to animate
-  }
+  }*/
 
   onSwipe(isLeft, event) {}
 
   render(context) {
-    var externalRenderers = this.esriLoaderContext.externalRenderers;
-    var SpatialReference = this.esriLoaderContext.SpatialReference;
 
     var view = context.view; //this.esriLoaderContext.view;
 

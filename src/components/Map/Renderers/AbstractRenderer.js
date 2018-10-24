@@ -12,7 +12,10 @@ function AbstractRenderer () {
 
 AbstractRenderer.prototype.setup = function(){throw "AbstractRenderer.prototype.setup"};
 
-AbstractRenderer.prototype.onRequestAnimationFrame = function(time){throw "AbstractRenderer.prototype.onRequestAnimationFrame"};
+//
+// Removed for now - to update objects - use TWEEN
+//
+// AbstractRenderer.prototype.update = function(time){throw "AbstractRenderer.prototype.update"};
 
 AbstractRenderer.prototype.start = function(){throw "AbstractRenderer.prototype.start"};
 

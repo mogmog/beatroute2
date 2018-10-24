@@ -313,13 +313,14 @@ export default class MapHolder extends Component {
               self.externalRenderersContainer[i].onMouseUp(mouse, event);
             }
           });
+
+          window.requestAnimationFrame(self.animate);
         }
       )
       .catch(err => {
         console.error(err);
       });
   }
-
 
   componentDidUpdate(prevProps) {
 
@@ -337,7 +338,6 @@ export default class MapHolder extends Component {
         latitude: this.props.image.latitude,
       });
 
-
       //this.esriLoaderContext.view.goTo(point, flyoptions);
 
       if (this.imageRenderer)
@@ -346,33 +346,34 @@ export default class MapHolder extends Component {
   }
 
   componentDidMount() {
-    this.esriLoad();
 
-    window.requestAnimationFrame(this.animate);
+    this.esriLoad();
   }
 
   animate(time) {
+
     window.requestAnimationFrame(this.animate);
 
-    for (let i = 0; i < this.externalRenderersContainer.length; i++) {
-      this.externalRenderersContainer[i].onRequestAnimationFrame(time);
-    }
+    // for (let i = 0; i < this.externalRenderersContainer.length; i++) 
+    // {
+    //  this.externalRenderersContainer[i].update(time);
+    // }
 
-    TWEEN.update(time);
+    var tweenIds = Object.keys(TWEEN._tweens);
 
-    // done as ad hoc for renderer update
-    // But ! renderer should be updated ONLY at some events - for example -user input, tween, map iploads etc ...
-    // ( common practice, used in mapbox )
+    if (tweenIds.length)
+    {
+      TWEEN.update(time);
 
-    // externalRenderers.requestRender(view);
-
-    if (
-      this.esriLoaderContext &&
-      this.esriLoaderContext.externalRenderers &&
-      this.esriLoaderContext.view &&
-      this.esriLoaderContext.view._stage
-    ) {
-      this.esriLoaderContext.externalRenderers.requestRender(this.esriLoaderContext.view);
+      if (
+        this.esriLoaderContext &&
+        this.esriLoaderContext.externalRenderers &&
+        this.esriLoaderContext.view &&
+        this.esriLoaderContext.view._stage
+      ) 
+      {
+        this.esriLoaderContext.externalRenderers.requestRender(this.esriLoaderContext.view);
+      }
     }
   }
 

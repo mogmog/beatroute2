@@ -173,7 +173,7 @@ export default class RouteRenderer extends AbstractRenderer {
     context.resetWebGLState();
   }
 
-  onRequestAnimationFrame(time) 
+  /*update(time) 
   {
     if (this.route) 
     {
@@ -184,13 +184,11 @@ export default class RouteRenderer extends AbstractRenderer {
 
       this.route.setProgress(this.currentStep);
     }
-  }
+  }*/
 
   onSwipe(isLeft, event) {}
 
   render(context) {
-    var externalRenderers = this.esriLoaderContext.externalRenderers;
-    var SpatialReference = this.esriLoaderContext.SpatialReference;
 
     var view = context.view; //this.esriLoaderContext.view;
 
@@ -213,10 +211,6 @@ export default class RouteRenderer extends AbstractRenderer {
 
     this.renderer.render(this.scene, this.camera);
 
-    // externalRenderers.requestRender(view); - this is bad practice - endless recursion
-    //
-    // check the MapHolder - animation frame
-
     // cleanup
     context.resetWebGLState();
   }
@@ -226,5 +220,28 @@ export default class RouteRenderer extends AbstractRenderer {
     this.scene.add(this.route);
 
     this.scene.add(new THREE.AmbientLight(0xeeeeee));
+
+    var object = this.route;
+
+    object.tween = new TWEEN.Tween(
+      {
+        persent: 0,
+      })
+      .to(
+      {
+        persent : 1
+      }, 
+      15000)
+      .onUpdate(
+        function(tween_obj) 
+        {
+          object.setProgress(tween_obj.persent);
+        })
+      .onComplete(function() {
+
+        delete object.tween;
+      })
+      .delay(5000)
+      .start();
   }
 }

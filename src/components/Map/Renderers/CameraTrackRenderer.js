@@ -117,17 +117,15 @@ export default class CameraTrackRenderer extends AbstractRenderer {
     context.resetWebGLState();
   }
 
-  onRequestAnimationFrame(time) {
-    //nothing to animate route
+  /*update(time) {
+    // nothing to animate route
     // wrote you code that update object on requestAnimationFrame
     // because it will be much smooth that in render callback
-  }
+  }*/
 
   onSwipe(isLeft, event) {}
 
   render(context) {
-    var externalRenderers = this.esriLoaderContext.externalRenderers;
-    var SpatialReference = this.esriLoaderContext.SpatialReference;
 
     var view = context.view; //this.esriLoaderContext.view;
 
@@ -149,10 +147,6 @@ export default class CameraTrackRenderer extends AbstractRenderer {
     this.renderer.state.setBlending(THREE.NoBlending); // 0.97 fix !
 
     this.renderer.render(this.scene, this.camera);
-
-    // externalRenderers.requestRender(view); - this is bad practice - endless recursion
-    //
-    // check the MapHolder - animation frame
 
     // cleanup
     context.resetWebGLState();
